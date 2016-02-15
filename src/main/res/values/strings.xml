@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PJS4</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_face_book_test">faceBookTest</string>
+    <string name="facebook_app_id">1063754190342016</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>

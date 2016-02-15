@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="background" type="color">#FFFFFF</item>
+    <item name="blueFacebook" type="color">#3B5998</item>
+    <item name="darkBlueFacebook" type="color">#293E6A</item>
+
+    <integer-array name="androidcolors">
+        <item>@color/blueFacebook</item>
+        <item>@color/darkBlueFacebook</item>
+    </integer-array>
+
+</resources>
