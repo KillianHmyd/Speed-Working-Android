@@ -1,12 +1,11 @@
-package com.example.rahman.pjs4Android;
-
-import com.example.rahman.pjs4Android.classItems.Group;
-import com.example.rahman.pjs4Android.classItems.Profil;
-import com.example.rahman.pjs4Android.classItems.RequestConnect;
-import com.example.rahman.pjs4Android.classItems.Skill;
-import com.example.rahman.pjs4Android.classItems.User;
+package parisdescartes.pjs4;
 
 
+import java.util.ArrayList;
+
+import parisdescartes.pjs4.classItems.Group;
+import parisdescartes.pjs4.classItems.ResponseService;
+import parisdescartes.pjs4.classItems.Skill;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -15,6 +14,7 @@ import retrofit.http.Header;
 import retrofit.http.PATCH;
 import retrofit.http.POST;
 import retrofit.http.PUT;
+import retrofit.http.Query;
 
 /**
  * Created by Killian on 08/02/2016.
@@ -23,64 +23,67 @@ import retrofit.http.PUT;
  */
 public interface ErelationService {
 
-    public static final String ENDPOINT = "http://192.168.1.89:8080";
+    public static final String ENDPOINT = "http://192.168.1.89:8080/api/";
 
 	// l'utilisateur qui se connecte
-    @POST("/api/user")
-    void connect(@Body RequestConnect requestConnect, Callback<Profil> callback);
+    @POST("user")
+    void connect(@Header("Token") String token, Callback<Profil> callback);
 
 	//Création d'un utilisateur
-    @POST("/api/user")
-    void createUser(@Header("Token") String token);
+    @POST("user")
+    void createUser(@Header("Token") String token, Callback<Profil> callback);
 
 	//Récupérer l'utilisateur
-	@GET("api/profil/:idUser")
-    void getProfile();
+	@GET("profil/:idUser")
+    void getProfil(@Header("Token") String token, Callback<Profil> callback);
 
     //Modifier le profil user
-	@PUT("api/profil")  //A refaire pour le moment
+	@PUT("profil")
+    void updateProfil(@Header("Token") String token, @Body Profil profil, Callback<ResponseService> callback);
 
 	//Supprimer le compte de l'user
-	@DELETE("/api/user")
-    void deleteUser();
+	@DELETE("user")
+    void deleteUser(@Header("Token") String token, Callback<ResponseService> callback);
 
     //Ajouter des compétences/skills
-    @POST("/api/profil/skill")
-    void addSkill(int idUser,@Body Skill skill);
+    @POST("profil/skill")
+    void addSkill(@Header("Token") String token, @Body Skill skill, Callback<ResponseService> callback);
 
     //Supprimer des compétences/skills
-    @POST("/api/profil/skill")
-    void deleteSkill(int idUser, @Body Skill skill);
+    @DELETE("profil/skill")
+    void deleteSkill(@Header("Token") String token, @Body Skill skill, Callback<ResponseService> callback);
 
     //Récupérer les groupes de l'user
-	@GET("/api/group")
+	@GET("group")
+    void getGroups(@Header("Token") String token, Callback<ArrayList<Group>> callback);
 
     //Créer un groupe
-    @POST("/api/group")
-    void createGroup(int idUser, @Body Group group);
+    @POST("group")
+    void createGroup(@Header("Token") String token, @Body Group group, Callback<ResponseService> callback);
 
     //Mise à jour d'un groupe
-    @PATCH("api/group")
+    @PATCH("group")
+    void updateGroup(@Header("Token") String token, @Body Group group, Callback<ResponseService> callback);
 
     //Fin du groupe/projet
-    @PATCH("api/group")
-    void endGroup();
+    @PATCH("group/end")
+    void endGroup(@Header("Token") String token, @Body int idGroup, Callback<ResponseService> callback);
 
 	//Supprimer un groupe
-	@DELETE("/api/group")
-    void deleteGroup();
+	@DELETE("group")
+    void deleteGroup(@Header("Token") String token, @Body int idGroup, Callback<ResponseService> callback);
 	
 	//Récupérer les matchings
-	@GET("/api/match/suggestion")
-
+	@GET("match/suggestion")
+    void getSuggestion(@Header("Token") String token, @Query("nbRelations") int nbRelations, Callback<ArrayList<Profil>> callback);
 	
 	//Accepter 
-	@POST("/api/match/accept")
-	void matchAccept(@Body User user);
+	@POST("match/accept")
+	void matchAccept(@Header("Token") String token, @Body User user, Callback<ResponseService> callback);
 
 	//Refuser
-	@POST("/api/match/refuse")
-    void matchRefuse(@Body User user);
+	@POST("match/refuse")
+    void matchRefuse(@Header("Token") String token, @Body User user, Callback<ResponseService> callback);
 	
 	
 
