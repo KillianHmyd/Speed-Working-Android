@@ -45,6 +45,7 @@ import retrofit.converter.GsonConverter;
 public class ConnectActivity extends Activity {
 
     private LoginButton loginButton;
+    private LoginButton subscribeButton;
     private CallbackManager callbackManager;
     private ProgressDialog progress;
     private SharedPreferences sharedpreferences;
@@ -90,6 +91,63 @@ public class ConnectActivity extends Activity {
         return this;
     }
 
+    public void login(){
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+        ErelationService erelationConnect = new RestAdapter.Builder().
+                setEndpoint(ErelationService.ENDPOINT).
+                setConverter(new GsonConverter(gson)).
+                build().
+                create(ErelationService.class);
+
+        erelationConnect.connect(AccessToken.getCurrentAccessToken().getToken(), new Callback<Profil>() {
+            @Override
+            public void success(Profil profil, Response response) {
+                //TODO CHECK RETURN + ADD DATA TO DATABASE
+                progress.dismiss();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                System.out.println(error);
+                LoginManager.getInstance().logOut();
+                progress.dismiss();
+                errorDialog("Connexion au serveur impossible.");
+            }
+        });
+    }
+
+    public void subscribe(){
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+        ErelationService erelationConnect = new RestAdapter.Builder().
+                setEndpoint(ErelationService.ENDPOINT).
+                setConverter(new GsonConverter(gson)).
+                build().
+                create(ErelationService.class);
+
+        erelationConnect.createUser(AccessToken.getCurrentAccessToken().getToken(), new Callback<Profil>() {
+            @Override
+            public void success(Profil profil, Response response) {
+                //TODO CHECK RETURN + ADD DATA TO DATABASE
+                progress.dismiss();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+            }
+            @Override
+            public void failure(RetrofitError error) {
+                System.out.println(error);
+                LoginManager.getInstance().logOut();
+                progress.dismiss();
+                errorDialog("Connexion au serveur impossible.");
+            }
+        });
+    }
+
     public void fbConnect() {
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday"));
@@ -118,55 +176,55 @@ public class ConnectActivity extends Activity {
 
                     @Override
                     public void onCompleted(final JSONObject jsonObject, GraphResponse graphResponse) {
+                        login();
+                    }
+                });
+                request.executeAsync();
 
-                        Gson gson = new GsonBuilder()
-                                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                                .create();
-                        EraltionService erelationConnect = new RestAdapter.Builder().
-                                setEndpoint(EraltionService.ENDPOINT).
-                                setConverter(new GsonConverter(gson)).
-                                build().
-                                create(EraltionService.class);
+            }
 
-                        try {
-                            erelationConnect.connect(new RequestConnect(jsonObject.getString("id"), AccessToken.getCurrentAccessToken().getToken()), new Callback<Profil>() {
-                                @Override
-                                public void success(Profil profil, Response response) {
-                                    sharedpreferences.edit().putInt("idUser", profil.getIdUser()).commit();
-                                    sharedpreferences.edit().putString("firstname", profil.getFirstname()).commit();
-                                    sharedpreferences.edit().putString("lastname", profil.getLastname()).commit();
-                                    sharedpreferences.edit().putString("email", profil.getEmail()).commit();
-                                    sharedpreferences.edit().putString("gender", profil.getGender()).commit();
-                                    sharedpreferences.edit().putString("birthday", profil.getBirthday().toString()).commit();
-                                    sharedpreferences.edit().putString("picture", profil.getPicture()).commit();
-                                    progress.dismiss();
-                                    Intent intent = new Intent(getContext(), MainActivity.class);
-                                    startActivity(intent);
-                                }
+            @Override
+            public void onCancel() {
+                errorDialog("Connexion annulée.");
+            }
 
-                                @Override
-                                public void failure(RetrofitError error) {
-                                    System.out.println(error);
-                                    LoginManager.getInstance().logOut();
-                                    progress.dismiss();
-                                    errorDialog("Connexion au serveur impossible.");
-                                    Intent intent = new Intent(getContext(), MainActivity.class);
-                                    startActivity(intent);
-                                }
-                            });
-                        } catch (JSONException e) {
-                            System.out.println(e);
+            @Override
+            public void onError(FacebookException e) {
+                errorDialog("Connexionimpossible. Veuillez ressayer.");
+            }
+        });
+
+        subscribeButton = (LoginButton) findViewById(R.id.subscribe_button);
+        subscribeButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday"));
+        subscribeButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                startVideo();
+                progress = ProgressDialog.show(getContext(), "Connexion en cours",
+                        "Veuillez patienter....", true);
+                progress.setCancelable(true);
+                progress.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                        // TODO Auto-generated method stub
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
                             LoginManager.getInstance().logOut();
                             progress.dismiss();
-                            errorDialog("Connexion au serveur impossible.");
+                            finish();
+                            startActivity(getIntent());
+                            return true;
                         }
+                        return true;
+                    }
+                });
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
 
+                    @Override
+                    public void onCompleted(final JSONObject jsonObject, GraphResponse graphResponse) {
+                        subscribe();
                     }
                 });
 
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,last_name,email,gender, birthday,first_name,picture.height(500).width(500).type(large)");
-                request.setParameters(parameters);
                 request.executeAsync();
 
             }
