@@ -7,6 +7,7 @@ import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.classItems.Skill;
+import parisdescartes.pjs4.classItems.User;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;

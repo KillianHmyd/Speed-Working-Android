@@ -38,6 +38,7 @@ import java.util.Arrays;
 
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
+import parisdescartes.pjs4.classItems.User;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -47,7 +48,7 @@ import retrofit.converter.GsonConverter;
 public class ConnectActivity extends Activity {
 
     private LoginButton loginButton;
-    private LoginButton subscribeButton;
+    private ERelationDbHelper db;
     private CallbackManager callbackManager;
     private ProgressDialog progress;
     private SharedPreferences sharedpreferences;
@@ -55,6 +56,7 @@ public class ConnectActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = ((Application) getApplication()).getDb();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         sharedpreferences  = getSharedPreferences("USER", Context.MODE_PRIVATE);
@@ -106,16 +108,23 @@ public class ConnectActivity extends Activity {
         erelationConnect.connect(AccessToken.getCurrentAccessToken().getToken(), new Callback<User>() {
             @Override
             public void success(final User user, Response response) {
-                //TODO CHECK RETURN + ADD DATA TO DATABASE
                 progress.dismiss();
+                db.insertUser(user);
                 erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), user.getIdUser(), new Callback<Profil>() {
                     @Override
                     public void success(Profil profil, Response response) {
-                        sharedpreferences.edit().putInt("idUser", user.getIdUser());
-
-                        //TODO Add profil in DB
-                        Intent intent = new Intent(getContext(), MainActivity.class);
-                        startActivity(intent);
+                        if(profil.getCode() != null){
+                            System.out.println(profil.getMessage());
+                            LoginManager.getInstance().logOut();
+                            progress.dismiss();
+                            errorDialog(profil.getMessage());
+                        }
+                        else {
+                            db.insertProfile(profil, false);
+                            sharedpreferences.edit().putInt("idUser", user.getIdUser());
+                            Intent intent = new Intent(getContext(), MainActivity.class);
+                            startActivity(intent);
+                        }
                     }
 
                     @Override
@@ -168,6 +177,7 @@ public class ConnectActivity extends Activity {
                 LoginManager.getInstance().logOut();
                 progress.dismiss();
                 errorDialog("Connexion au serveur impossible.");
+                errorDialog(error.getMessage());
             }
         });
     }
@@ -185,7 +195,6 @@ public class ConnectActivity extends Activity {
                 progress.setOnKeyListener(new DialogInterface.OnKeyListener() {
                     @Override
                     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                        // TODO Auto-generated method stub
                         if (keyCode == KeyEvent.KEYCODE_BACK) {
                             LoginManager.getInstance().logOut();
                             progress.dismiss();

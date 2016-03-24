@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Profil;
@@ -37,7 +38,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                     "email TEXT NOT NULL," +
                     "birthday TEXT NOT NULL," +
                     "gender TEXT NOT NULL," +
-                    "picture BLOB," +
+                    "picture TEXT," +
                     "matched INTEGER NOT NULL," +
                     "FOREIGN KEY(idUser) REFERENCES USER(idUser)" +
             ")"
@@ -65,7 +66,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public static final String ERelation_CREATE_OWNSKILL_TABLE =
             "create table OWNSKILL (" +
                     "idUser INTEGER NOT NULL, " +
-                    "idSkill INTEGER NOT NULL" +
+                    "idSkill INTEGER NOT NULL," +
                     "FOREIGN KEY (idUser) REFERENCES USER(idUser),"+
                     "FOREIGN KEY (idSkill) REFERENCES SKILL(idSkill)"+
             ")"
@@ -73,8 +74,9 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
 
     public static final String ERelation_CREATE_ACCESSGRP_TABLE =
             "create table ACCESSGRP (" +
-                    "idUser INTEGER PRIMARY KEY NOT NULL," +
-                    "idGroup INTEGER PRIMARY NOT NULL," +
+                    "idUser INTEGER NOT NULL," +
+                    "idGroup INTEGER NOT NULL," +
+                    "PRIMARY KEY(idUser, idGroup),"+
                     "FOREIGN KEY(idUser) REFERENCES USER(idUser)," +
                     "FOREIGN KEY(idGroup) REFERENCES GROUPS(idGroup)" +
             ")"
@@ -127,7 +129,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("idUser", user.getIdUser());
         contentValues.put("idFacebook", user.getIdFacebook());
-        contentValues.put("token", user.getTokenFacebook());
+        contentValues.put("tokenFacebook", user.getTokenFacebook());
         contentValues.put("lastActivity", user.getLastActivity().toString());
 
         long result = db.insert("USER", null, contentValues);
@@ -144,7 +146,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     }
 
     /** PROFIL **/
-    public boolean insertProfile(Profil profile){
+    public boolean insertProfile(Profil profile, Boolean matched){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("idUser", profile.getIdUser());
@@ -155,11 +157,19 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("birthday", profile.getBirthday().toString());
         contentValues.put("email", profile.getEmail());
         contentValues.put("picture", profile.getPicture());
-
+        int match;
+        if(matched)
+            match=1;
+        else
+            match=0;
+        contentValues.put("matched", match);
+        System.out.println("IDUSER INSERT : "+profile.getIdUser());
         long result = db.insert("PROFIL", null, contentValues);
         if(result == -1){
+            System.out.println("Pas ok");
             return false;
         }else{
+            System.out.println("OK");
             return true;
         }
     }
@@ -172,9 +182,8 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public Profil getProfile(long idUser){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from PROFIL WHERE idUser = ?", new String[]{idUser + ""}) ;
-
+        System.out.println("IDUSER GET : "+idUser);
         if(result.getCount() == 0){
-            //show message "AUCUN USER CORREPONDANT A CET ID
             return null;
         }
 
@@ -190,7 +199,6 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                 null,
                 null
         );
-        
         return profil;
     }
 
