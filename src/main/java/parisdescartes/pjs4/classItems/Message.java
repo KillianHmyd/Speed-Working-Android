@@ -10,7 +10,7 @@ public class Message {
     private Integer idConv ;
     private Integer idUser ;
     private Integer code ;
-    private String msg ;
+    private String message;
 
     public Message(Integer idMsg, String msgContent, Integer idConv,
                    Integer idUser, Integer code, String msg) {
@@ -19,7 +19,7 @@ public class Message {
         this.idConv = idConv;
         this.idUser = idUser;
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
     }
 
     public Integer getIdMsg() {
@@ -42,7 +42,7 @@ public class Message {
         return code;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 }

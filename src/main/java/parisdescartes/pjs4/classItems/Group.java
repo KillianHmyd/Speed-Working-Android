@@ -14,7 +14,7 @@ public class Group {
     private boolean endOfProject ;
     private List<Integer> UserList ;
     private Integer code ;
-    private String msg ;
+    private String message;
 
     public Group(Integer idGroup, Integer idUserLead, String grpName, String projectName, String description,
                  boolean endOfProject, List<Integer> userList, Integer code, String msg) {
@@ -26,7 +26,7 @@ public class Group {
         this.endOfProject = endOfProject;
         UserList = userList;
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
     }
 
     public Integer getIdGroup() {
@@ -61,7 +61,7 @@ public class Group {
         return code;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 }
