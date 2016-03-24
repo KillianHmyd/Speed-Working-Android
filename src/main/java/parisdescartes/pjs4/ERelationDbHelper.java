@@ -91,7 +91,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
 
     //CONSTRUCTOR
     public ERelationDbHelper(Context context) {
-        super(context,DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
 
@@ -169,9 +169,29 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("PROFIL", "idUser" + " = ?", new String[]{String.valueOf(profil.getIdUser())});
     }
 
-    public Cursor getProfile(Profil profile){
+    public Profil getProfile(long idUser){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.rawQuery("select * from PROFIL WHERE idUser = ?", new String[]{profile.getIdUser() + ""}) ;
+        Cursor result = db.rawQuery("select * from PROFIL WHERE idUser = ?", new String[]{idUser + ""}) ;
+
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+
+        result.moveToFirst();
+        Profil profil = new Profil(
+                result.getInt(0),
+                result.getString(1),
+                result.getString(2),
+                result.getString(3),
+                null, //TODO convert String to Date
+                result.getString(5),
+                result.getString(6),
+                null,
+                null
+        );
+        
+        return profil;
     }
 
     public Cursor getAllProfile(){
@@ -297,6 +317,30 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public Integer deleteGroup(long id){
         SQLiteDatabase db = getWritableDatabase() ;
         return db.delete("GROUPS", "idGroup" + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public Group getGroup(int idGroup){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from GROUPS WHERE idGroup = ?", new String[] {idGroup + ""});
+
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        result.moveToFirst();
+        boolean endOfProject = result.getInt(5) == 1 ? true : false ;
+        Group group = new Group(
+                result.getInt(0),
+                result.getInt(1),
+                result.getString(2),
+                result.getString(3),
+                result.getString(4),
+                endOfProject,
+                null,
+                null,
+                null
+        );
+        return group;
     }
 
     public Cursor getAllGroups(){
