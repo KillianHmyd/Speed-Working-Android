@@ -17,7 +17,7 @@ public class Profil {
     private String picture;
 
     private Integer code ;
-    private String msg ;
+    private String message;
 
     public Profil(Integer idUser, String firstname, String lastname, String email, Date birthday,
                   String gender, String picture, Integer code, String msg) {
@@ -29,7 +29,7 @@ public class Profil {
         this.gender = gender;
         this.picture = picture;
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
     }
 
     public Integer getIdUser() {
@@ -64,7 +64,7 @@ public class Profil {
         return code;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 }
