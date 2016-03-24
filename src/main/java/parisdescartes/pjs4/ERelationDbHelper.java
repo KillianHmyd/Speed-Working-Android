@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.Skill;
@@ -163,7 +165,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         else
             match=0;
         contentValues.put("matched", match);
-        System.out.println("IDUSER INSERT : "+profile.getIdUser());
+        System.out.println("IDUSER INSERT : " + profile.getIdUser());
         long result = db.insert("PROFIL", null, contentValues);
         if(result == -1){
             System.out.println("Pas ok");
@@ -202,22 +204,73 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return profil;
     }
 
-    public Cursor getAllProfile(){
+    public ArrayList<Profil> getAllProfile(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from PROFIL", null);
-        return result;
+        ArrayList<Profil> allProfiles= new ArrayList<Profil>();
+        result.moveToFirst();
+        int i = 1;
+        while(result.moveToNext()){
+            i++ ;
+            allProfiles.add(new Profil(
+                    result.getInt(0),
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    null, //TODO convert String to Date
+                    result.getString(5),
+                    result.getString(6),
+                    null,
+                    null
+            ));
+        }
+        return allProfiles ;
     }
 
-    public Cursor getMatchedProfile(){
+    public ArrayList<Profil> getMatchedProfile(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from PROFIL WHERE matched = 1", null);
-        return result;
+        ArrayList<Profil> allProfiles= new ArrayList<Profil>();
+        result.moveToFirst();
+        int i = 1;
+        while(result.moveToNext()){
+            i++ ;
+            allProfiles.add(new Profil(
+                    result.getInt(0),
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    null, //TODO convert String to Date
+                    result.getString(5),
+                    result.getString(6),
+                    null,
+                    null
+            ));
+        }
+        return allProfiles ;
     }
 
-    public Cursor getUnmatchedProfile(){
+    public ArrayList<Profil> getUnmatchedProfile(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from PROFIL WHERE matched = 0", null);
-        return result;
+        ArrayList<Profil> allProfiles= new ArrayList<Profil>();
+        result.moveToFirst();
+        int i = 1;
+        while(result.moveToNext()){
+            i++ ;
+            allProfiles.add(new Profil(
+                    result.getInt(0),
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    null, //TODO convert String to Date
+                    result.getString(5),
+                    result.getString(6),
+                    null,
+                    null
+            ));
+        }
+        return allProfiles ;
     }
 
     /** SKILL**/
@@ -254,10 +307,22 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("SKILL", "idSkill" + " = ?", new String[]{String.valueOf(skill.getIdSkill())});
     }
 
-    public Cursor getAllSkill(){
+    public ArrayList<Skill> getAllSkill(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from SKILL", null);
-        return result;
+        ArrayList<Skill> allSkill = new ArrayList<Skill>();
+        result.moveToFirst();
+        int i = 1;
+        while(result.moveToNext()){
+            i++ ;
+            allSkill.add(new Skill(
+                    result.getInt(0),
+                    result.getString(1),
+                    null,
+                    null
+            ));
+        }
+        return allSkill ;
     }
 
     /** OWNSKILL **/
@@ -280,10 +345,22 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("OWNSKILL", "idSkill" + " = ?", new String[]{String.valueOf(id)});
     }
 
-    public Cursor getAllOwnSkill(){
+    public ArrayList<Skill> getAllOwnSkill(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = db.rawQuery("select * from OWNSKILL", null);
-        return result;
+        Cursor result = db.rawQuery("select * from SKILL s, OWNSKILL o WHERE s.idSkill = o.idSkill", null);
+        ArrayList<Skill> allOwnSkill = new ArrayList<Skill>();
+        result.moveToFirst();
+        int i = 1;
+        while(result.moveToNext()){
+            i++ ;
+            allOwnSkill.add(new Skill(
+                    result.getInt(0),
+                    result.getString(1),
+                    null,
+                    null
+            ));
+        }
+        return allOwnSkill ;
     }
 
     /** GROUPS **/
@@ -351,10 +428,28 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return group;
     }
 
-    public Cursor getAllGroups(){
+    public ArrayList<Group> getAllGroups(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from GROUPS", null);
-        return result;
+        ArrayList<Group> allGroups = new ArrayList<Group>();
+        result.moveToFirst();
+        int i = 1;
+        boolean endOfProject = result.getInt(5) == 1 ? true : false ;
+        while(result.moveToNext()){
+            i++ ;
+            allGroups.add(new Group(
+                    result.getInt(0),
+                    result.getInt(1),
+                    result.getString(2),
+                    result.getString(3),
+                    result.getString(4),
+                    endOfProject,
+                    null,
+                    null,
+                    null
+            ));
+        }
+        return allGroups ;
     }
 
     /** ACCESSGROUP **/
@@ -382,9 +477,27 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getAllUserToGroup(){
+    public ArrayList<Profil> getAllUserToGroup(long idGroup){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = db.rawQuery("select * from ACCESSGRP", null);
-        return result;
+        Cursor result = db.rawQuery("select * from PROFIL p, ACCESSGRP agrp " +
+                "WHERE agrp.idGroup = ? AND p.idUser = agrp.idUser ",new String[]{idGroup +""});
+        ArrayList<Profil> allProfilesToGroup = new ArrayList<Profil>();
+        result.moveToFirst();
+        int i = 1;
+        while(result.moveToNext()){
+            i++ ;
+            allProfilesToGroup.add(new Profil(
+                    result.getInt(0),
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    null, //TODO convert String to Date
+                    result.getString(5),
+                    result.getString(6),
+                    null,
+                    null
+            ));
+        }
+        return allProfilesToGroup ;
     }
 }
