@@ -5,19 +5,24 @@ package parisdescartes.pjs4.classItems;
  */
 public class Message {
 
-    private int idMsg ;
+    private Integer idMsg ;
     private String msgContent ;
-    private int idConv ;
-    private int idUser ;
+    private Integer idConv ;
+    private Integer idUser ;
+    private Integer code ;
+    private String msg ;
 
-    public Message(int idUser, int idMsg, String msgContent, int idConv) {
-        this.idUser = idUser;
+    public Message(Integer idMsg, String msgContent, Integer idConv,
+                   Integer idUser, Integer code, String msg) {
         this.idMsg = idMsg;
         this.msgContent = msgContent;
         this.idConv = idConv;
+        this.idUser = idUser;
+        this.code = code;
+        this.msg = msg;
     }
 
-    public int getIdMsg() {
+    public Integer getIdMsg() {
         return idMsg;
     }
 
@@ -25,11 +30,19 @@ public class Message {
         return msgContent;
     }
 
-    public int getIdConv() {
+    public Integer getIdConv() {
         return idConv;
     }
 
-    public int getIdUser() {
+    public Integer getIdUser() {
         return idUser;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 }

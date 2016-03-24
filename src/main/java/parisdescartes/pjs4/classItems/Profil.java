@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class Profil {
 
-    private int idUser;
+    private Integer idUser;
     private String firstname;
     private String lastname;
     private String email;
@@ -16,11 +16,11 @@ public class Profil {
     private String gender;
     private String picture;
 
-    private int code ;
+    private Integer code ;
     private String msg ;
 
-
-    public Profil(int idUser, String firstname, String lastname, String email, Date birthday, String gender, String picture, int code, String msg) {
+    public Profil(Integer idUser, String firstname, String lastname, String email, Date birthday,
+                  String gender, String picture, Integer code, String msg) {
         this.idUser = idUser;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -28,63 +28,43 @@ public class Profil {
         this.birthday = birthday;
         this.gender = gender;
         this.picture = picture;
-        this.code = code ;
-        this.msg = msg ;
+        this.code = code;
+        this.msg = msg;
     }
 
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public int getIdUser() {
+    public Integer getIdUser() {
         return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
     }
 
     public String getFirstname() {
         return firstname;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
     public String getLastname() {
         return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public Date getBirthday() {
+        return birthday;
     }
 
     public String getGender() {
         return gender;
     }
 
-    public void setGender(String sexe) {
-        this.gender = sexe;
-    }
-
     public String getPicture() {
         return picture;
     }
 
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 }

@@ -8,47 +8,43 @@ import java.util.Date;
  */
 public class User {
 
-    private int idUser;
+    private Integer idUser;
     private String idFacebook;
     private String tokenFacebook;
     private Date lastActivity;
+    private Integer code ;
+    private String msg ;
 
-    public User(int idUser, String idFacebook, String tokenFacebook, Date lastActivity) {
+    public User(Integer idUser, String idFacebook, String tokenFacebook, Date lastActivity, Integer code, String msg) {
         this.idUser = idUser;
         this.idFacebook = idFacebook;
         this.tokenFacebook = tokenFacebook;
         this.lastActivity = lastActivity;
+        this.code = code;
+        this.msg = msg;
     }
 
-    public int getIdUser() {
+    public Integer getIdUser() {
         return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
     }
 
     public String getIdFacebook() {
         return idFacebook;
     }
 
-    public void setIdFacebook(String idFacebook) {
-        this.idFacebook = idFacebook;
-    }
-
     public String getTokenFacebook() {
         return tokenFacebook;
-    }
-
-    public void setTokenFacebook(String tokenFacebook) {
-        this.tokenFacebook = tokenFacebook;
     }
 
     public Date getLastActivity() {
         return lastActivity;
     }
 
-    public void setLastActivity(Date lastActivity) {
-        this.lastActivity = lastActivity;
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 }
