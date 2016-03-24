@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
+import java.util.ArrayList;
+
+import parisdescartes.pjs4.classItems.Contributor;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.Skill;
@@ -291,10 +293,10 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("idGroup", group.getIdGroup());
-        contentValues.put("nameGroup", group.getGrpName());
-        contentValues.put("presentation", group.getDescription());
-        contentValues.put("idLeader", group.getIdUserLead());
-        contentValues.put("finish", group.isEndOfProject());
+        contentValues.put("nameGroup", group.getNameGroup());
+        contentValues.put("presentation", group.getPresentation());
+        contentValues.put("idLeader", group.getIdLeader());
+        contentValues.put("finish", group.isFinish());
         db.insert("GROUPS", null, contentValues);
 
         long result = db.insert("GROUPS", null, contentValues);
@@ -309,10 +311,10 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("idGroup", group.getIdGroup());
-        contentValues.put("nameGroup", group.getGrpName());
-        contentValues.put("presentation", group.getDescription());
-        contentValues.put("idLeader", group.getIdUserLead());
-        contentValues.put("finish", group.isEndOfProject());
+        contentValues.put("nameGroup", group.getNameGroup());
+        contentValues.put("presentation", group.getPresentation());
+        contentValues.put("idLeader", group.getIdLeader());
+        contentValues.put("finish", group.isFinish());
 
         long result = db.update("GROUPS", contentValues, "idGroup = ?", new String[]{group.getIdGroup() + ""});
         if(result == -1){
@@ -336,33 +338,53 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             return null;
         }
         result.moveToFirst();
-        boolean endOfProject = result.getInt(5) == 1 ? true : false ;
+        boolean endOfProject = result.getInt(4) == 1 ? true : false ;
         Group group = new Group(
                 result.getInt(0),
-                result.getInt(1),
+                result.getString(1),
                 result.getString(2),
-                result.getString(3),
-                result.getString(4),
+                result.getInt(3),
                 endOfProject,
                 null,
                 null,
                 null
         );
+        group.setContributors(getAllUserToGroup(result.getInt(0)));
         return group;
     }
 
-    public Cursor getAllGroups(){
+    public ArrayList<Group> getAllGroups(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from GROUPS", null);
-        return result;
+        ArrayList<Group> groups = new ArrayList<>();
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        while(result.moveToNext()){
+            boolean endOfProject = result.getInt(4) == 1 ? true : false ;
+            Group group = new Group(
+                    result.getInt(0),
+                    result.getString(1),
+                    result.getString(2),
+                    result.getInt(3),
+                    endOfProject,
+                    null,
+                    null,
+                    null
+            );
+            group.setContributors(getAllUserToGroup(result.getInt(0)));
+            groups.add(group);
+        }
+        return groups;
     }
 
     /** ACCESSGROUP **/
-    public boolean insertUserToGroup(User user, Group group){
+    public boolean insertUserToGroup(int idUser, int idGroup){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("idUser", user.getIdUser());
-        contentValues.put("idGroup", group.getIdGroup());
+        contentValues.put("idUser", idUser);
+        contentValues.put("idGroup", idGroup);
 
         long result = db.insert("ACCESSGRP", null, contentValues);
         if(result == -1){
@@ -371,6 +393,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             return true;
         }
     }
+
 
     public Integer deleteUserToGroup(User user, Group group){
         SQLiteDatabase db = getWritableDatabase() ;
@@ -382,9 +405,13 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Cursor getAllUserToGroup(){
+    public ArrayList<Contributor> getAllUserToGroup(int idGroup){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = db.rawQuery("select * from ACCESSGRP", null);
-        return result;
+        Cursor result = db.rawQuery("select * from ACCESSGRP WHERE idGroup = ?", new String[]{idGroup + ""});
+        ArrayList<Contributor> contributors = new ArrayList<>();
+        while(result.moveToNext()){
+            contributors.add(new Contributor(Integer.valueOf(result.getInt(0)), Integer.valueOf(result.getInt(1))));
+        }
+        return contributors;
     }
 }

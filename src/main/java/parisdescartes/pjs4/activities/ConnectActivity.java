@@ -31,12 +31,16 @@ import com.google.gson.GsonBuilder;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
+import parisdescartes.pjs4.Application;
+import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
-import parisdescartes.pjs4.User;
+import parisdescartes.pjs4.classItems.Contributor;
+import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.classItems.User;
@@ -57,7 +61,6 @@ public class ConnectActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = ((Application) getApplication()).getDb();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         sharedpreferences  = getSharedPreferences("USER", Context.MODE_PRIVATE);
@@ -67,6 +70,8 @@ public class ConnectActivity extends Activity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
+            ((Application) getApplication()).resetDb();
+            db = ((Application) getApplication()).getDb();
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.clear();
             editor.commit();
@@ -109,7 +114,6 @@ public class ConnectActivity extends Activity {
         erelationConnect.connect(AccessToken.getCurrentAccessToken().getToken(), new Callback<User>() {
             @Override
             public void success(final User user, Response response) {
-                progress.dismiss();
                 db.insertUser(user);
                 erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), user.getIdUser(), new Callback<Profil>() {
                     @Override
@@ -123,8 +127,27 @@ public class ConnectActivity extends Activity {
                         else {
                             db.insertProfile(profil, false);
                             sharedpreferences.edit().putInt("idUser", user.getIdUser());
-                            Intent intent = new Intent(getContext(), MainActivity.class);
-                            startActivity(intent);
+                            erelationConnect.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
+                                @Override
+                                public void success(ArrayList<Group> groups, Response response) {
+                                    for (Group g : groups) {
+                                        db.insertGroup(g);
+                                        for(Contributor c : g.getContributors()){
+                                            db.insertUserToGroup(c.getIdUser(), c.getIdGroup());
+                                        }
+                                    }
+                                    Intent intent = new Intent(getContext(), MainActivity.class);
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    System.out.println(error);
+                                    LoginManager.getInstance().logOut();
+                                    progress.dismiss();
+                                    errorDialog(error.getMessage());
+                                }
+                            });
                         }
                     }
 
