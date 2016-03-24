@@ -36,6 +36,8 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 
+import parisdescartes.pjs4.classItems.Profil;
+import parisdescartes.pjs4.classItems.ResponseService;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -95,19 +97,36 @@ public class ConnectActivity extends Activity {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 .create();
-        ErelationService erelationConnect = new RestAdapter.Builder().
+        final ErelationService erelationConnect = new RestAdapter.Builder().
                 setEndpoint(ErelationService.ENDPOINT).
                 setConverter(new GsonConverter(gson)).
                 build().
                 create(ErelationService.class);
 
-        erelationConnect.connect(AccessToken.getCurrentAccessToken().getToken(), new Callback<Profil>() {
+        erelationConnect.connect(AccessToken.getCurrentAccessToken().getToken(), new Callback<User>() {
             @Override
-            public void success(Profil profil, Response response) {
+            public void success(final User user, Response response) {
                 //TODO CHECK RETURN + ADD DATA TO DATABASE
                 progress.dismiss();
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
+                erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), user.getIdUser(), new Callback<Profil>() {
+                    @Override
+                    public void success(Profil profil, Response response) {
+                        sharedpreferences.edit().putInt("idUser", user.getIdUser());
+
+                        //TODO Add profil in DB
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        System.out.println(error);
+                        LoginManager.getInstance().logOut();
+                        progress.dismiss();
+                        errorDialog("Connexion au serveur impossible.");
+                    }
+                });
+
             }
 
             @Override
@@ -130,14 +149,19 @@ public class ConnectActivity extends Activity {
                 build().
                 create(ErelationService.class);
 
-        erelationConnect.createUser(AccessToken.getCurrentAccessToken().getToken(), new Callback<Profil>() {
+        erelationConnect.createUser(AccessToken.getCurrentAccessToken().getToken(), new Callback<ResponseService>() {
             @Override
-            public void success(Profil profil, Response response) {
-                //TODO CHECK RETURN + ADD DATA TO DATABASE
-                progress.dismiss();
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
+            public void success(ResponseService responseService, Response response) {
+                if(responseService.getCode().equals(201) || responseService.getCode().equals(401))
+                    login();
+                else{
+                    System.out.println(responseService.getMessage());
+                    LoginManager.getInstance().logOut();
+                    progress.dismiss();
+                    errorDialog(responseService.getMessage());
+                }
             }
+
             @Override
             public void failure(RetrofitError error) {
                 System.out.println(error);
@@ -176,55 +200,9 @@ public class ConnectActivity extends Activity {
 
                     @Override
                     public void onCompleted(final JSONObject jsonObject, GraphResponse graphResponse) {
-                        login();
-                    }
-                });
-                request.executeAsync();
-
-            }
-
-            @Override
-            public void onCancel() {
-                errorDialog("Connexion annulée.");
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                errorDialog("Connexionimpossible. Veuillez ressayer.");
-            }
-        });
-
-        subscribeButton = (LoginButton) findViewById(R.id.subscribe_button);
-        subscribeButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday"));
-        subscribeButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                startVideo();
-                progress = ProgressDialog.show(getContext(), "Connexion en cours",
-                        "Veuillez patienter....", true);
-                progress.setCancelable(true);
-                progress.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                        // TODO Auto-generated method stub
-                        if (keyCode == KeyEvent.KEYCODE_BACK) {
-                            LoginManager.getInstance().logOut();
-                            progress.dismiss();
-                            finish();
-                            startActivity(getIntent());
-                            return true;
-                        }
-                        return true;
-                    }
-                });
-                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-
-                    @Override
-                    public void onCompleted(final JSONObject jsonObject, GraphResponse graphResponse) {
                         subscribe();
                     }
                 });
-
                 request.executeAsync();
 
             }
@@ -236,7 +214,7 @@ public class ConnectActivity extends Activity {
 
             @Override
             public void onError(FacebookException e) {
-                errorDialog("Connexionimpossible. Veuillez ressayer.");
+                errorDialog("Connexion impossible. Veuillez ressayer.");
             }
         });
     }

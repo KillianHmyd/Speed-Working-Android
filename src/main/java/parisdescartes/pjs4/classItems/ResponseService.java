@@ -4,15 +4,15 @@ package parisdescartes.pjs4.classItems;
  * Created by Killian on 24/03/2016.
  */
 public class ResponseService {
-    private int code;
+    private Integer code;
     private String message;
 
-    public ResponseService(int code, String message) {
+    public ResponseService(Integer code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 

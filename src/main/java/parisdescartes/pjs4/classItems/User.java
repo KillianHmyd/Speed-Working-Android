@@ -13,7 +13,7 @@ public class User {
     private String tokenFacebook;
     private Date lastActivity;
     private Integer code ;
-    private String msg ;
+    private String message;
 
     public User(Integer idUser, String idFacebook, String tokenFacebook, Date lastActivity, Integer code, String msg) {
         this.idUser = idUser;
@@ -21,7 +21,7 @@ public class User {
         this.tokenFacebook = tokenFacebook;
         this.lastActivity = lastActivity;
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
     }
 
     public Integer getIdUser() {
@@ -44,7 +44,7 @@ public class User {
         return code;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 }
