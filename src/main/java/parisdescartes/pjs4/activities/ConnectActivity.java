@@ -1,4 +1,4 @@
-package parisdescartes.pjs4;
+package parisdescartes.pjs4.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.facebook.AccessToken;
@@ -30,12 +29,14 @@ import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
 
 
+import parisdescartes.pjs4.ErelationService;
+import parisdescartes.pjs4.R;
+import parisdescartes.pjs4.User;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.classItems.User;
