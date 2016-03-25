@@ -1,6 +1,10 @@
 package parisdescartes.pjs4.activities;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -16,12 +20,19 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import parisdescartes.pjs4.Application;
 import parisdescartes.pjs4.CustomViewPager;
+import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.R;
+import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.fragments.*;
 import parisdescartes.pjs4.swipeCards.view.CardContainer;
 
@@ -35,12 +46,17 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    private Profil profil;
+    private SharedPreferences sharedPreferences;
+    private ERelationDbHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        sharedPreferences  = getSharedPreferences("USER", Context.MODE_PRIVATE);
+        db = ((Application)getApplication()).getDb();
+        profil = db.getProfile(sharedPreferences.getLong("idUser", 0));
         //NAVIGATION DRAWER PART
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawer.setDrawerListener(drawerToggle);
 
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        ((TextView)nvDrawer.getHeaderView(0).findViewById(R.id.nav_header_text)).setText(profil.getFirstname() + " " + profil.getLastname());
+        Picasso.with(this).load(profil.getPicture()).into(((ImageView)nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
         setupDrawerContent(nvDrawer);
 
 
@@ -172,6 +190,19 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         }
+
+    public void errorDialog(String message){
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle("Erreur");
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
 
 
 

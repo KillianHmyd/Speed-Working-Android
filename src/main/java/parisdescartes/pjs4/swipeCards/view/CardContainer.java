@@ -480,7 +480,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
             }, duration + 200);
 
             mTopCard = getChildAt(getChildCount() - 2);
-            CardModel cardModel = (CardModel) getAdapter().getItem(0);
+            CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount()-1);
 
             if (mTopCard != null)
                 mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
