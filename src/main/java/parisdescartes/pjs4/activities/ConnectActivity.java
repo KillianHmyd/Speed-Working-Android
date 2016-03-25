@@ -122,7 +122,6 @@ public class ConnectActivity extends Activity {
                             System.out.println(profil.getMessage());
                             LoginManager.getInstance().logOut();
                             progress.dismiss();
-                            errorDialog(profil.getMessage());
                         }
                         else {
                             db.insertProfile(profil, false);
@@ -201,7 +200,6 @@ public class ConnectActivity extends Activity {
                 LoginManager.getInstance().logOut();
                 progress.dismiss();
                 errorDialog("Connexion au serveur impossible.");
-                errorDialog(error.getMessage());
             }
         });
     }
@@ -212,6 +210,7 @@ public class ConnectActivity extends Activity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                System.out.println(AccessToken.getCurrentAccessToken().getToken());
                 startVideo();
                 progress = ProgressDialog.show(getContext(), "Connexion en cours",
                         "Veuillez patienter....", true);

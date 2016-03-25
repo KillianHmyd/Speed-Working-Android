@@ -20,9 +20,16 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,10 +38,17 @@ import java.util.List;
 import parisdescartes.pjs4.Application;
 import parisdescartes.pjs4.CustomViewPager;
 import parisdescartes.pjs4.ERelationDbHelper;
+import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.fragments.*;
 import parisdescartes.pjs4.swipeCards.view.CardContainer;
+import parisdescartes.pjs4.swipeCards.view.SimpleCardStackAdapter;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private Profil profil;
     private SharedPreferences sharedPreferences;
     private ERelationDbHelper db;
+    ErelationService erelationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +71,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         sharedPreferences  = getSharedPreferences("USER", Context.MODE_PRIVATE);
         db = ((Application)getApplication()).getDb();
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+        erelationService = new RestAdapter.Builder().
+                setEndpoint(ErelationService.ENDPOINT).
+                setConverter(new GsonConverter(gson)).
+                build().
+                create(ErelationService.class);
         profil = db.getProfile(sharedPreferences.getLong("idUser", 0));
         //NAVIGATION DRAWER PART
         // Set a Toolbar to replace the ActionBar.
@@ -227,6 +250,37 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         alertDialog.show();
+    }
+
+    public void refreshSuggestion(final View view){
+        ((ImageButton)view).setEnabled(false);
+        RotateAnimation ra =new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f,Animation.RELATIVE_TO_SELF, 0.5f);
+        ra.setFillAfter(true);
+        ra.setDuration(1000);
+        ra.setRepeatCount(-1);
+        view.startAnimation(ra);
+        erelationService.getSuggestion(AccessToken.getCurrentAccessToken().getToken(), 10, new Callback<ArrayList<Profil>>() {
+            @Override
+            public void success(ArrayList<Profil> profils, Response response) {
+                viewPager = (CustomViewPager) findViewById(R.id.viewpager);
+                Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+                if(viewPager.getCurrentItem() == 0 && page != null){
+                    ((OneFragment)page).setSuggestionsCards(profils);
+                    view.clearAnimation();
+                    ((ImageButton)view).setEnabled(true);
+                    Toast.makeText(getApplicationContext(), "Chargement fini", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                ((ImageButton)view).setEnabled(true);
+                view.clearAnimation();
+                errorDialog("Impossible de se connecter au serveur");
+            }
+        });
+
+
     }
 
 

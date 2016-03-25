@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
 import android.widget.Toast;
 
 
@@ -91,37 +92,7 @@ public class OneFragment extends Fragment {
         erelationConnect.getSuggestion(AccessToken.getCurrentAccessToken().getToken(), 10, new Callback<ArrayList<Profil>>() {
             @Override
             public void success(ArrayList<Profil> profils, Response response) {
-                suggestions = new ArrayList<Profil>();
-                final SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(getContext());
-                for (int i = profils.size() - 1; i >= 0; i--) {
-                    suggestions.add(profils.get(i));
-                }
-                for (final Profil p : suggestions) {
-                    System.out.println(p.getIdUser());
-                    Resources r = getResources();
-                    Picasso.with(getContext()).load(p.getPicture()).into(new com.squareup.picasso.Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            CardModel cardModel = new CardModel(p.getFirstname() + " " + p.getLastname(), "Description goes here", bitmap, p.getIdUser(), getContext());
-                            cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
-                            cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
-                            adapter.add(cardModel);
-                            if (suggestions.indexOf(p) + 1 == suggestions.size())
-                                mCardContainer.setAdapter(adapter);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            //TODO CHARGEMENT
-                        }
-                    });
-
-                }
+                setSuggestionsCards(profils);
             }
 
             @Override
@@ -193,5 +164,39 @@ public class OneFragment extends Fragment {
                 });
             }
         };
+    }
+
+    public void setSuggestionsCards(ArrayList<Profil> profils){
+        suggestions = new ArrayList<>();
+        final SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(getContext());
+        for (int i = profils.size() - 1; i >= 0; i--) {
+            suggestions.add(profils.get(i));
+        }
+        for (final Profil p : suggestions) {
+            System.out.println(p.getIdUser());
+            Resources r = getResources();
+            Picasso.with(getContext()).load(p.getPicture()).into(new com.squareup.picasso.Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    CardModel cardModel = new CardModel(p.getFirstname() + " " + p.getLastname(), "Description goes here", bitmap, p.getIdUser(), getContext());
+                    cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
+                    cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
+                    adapter.add(cardModel);
+                    if (suggestions.indexOf(p) + 1 == suggestions.size())
+                        mCardContainer.setAdapter(adapter);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    //TODO CHARGEMENT
+                }
+            });
+
+        }
     }
 }

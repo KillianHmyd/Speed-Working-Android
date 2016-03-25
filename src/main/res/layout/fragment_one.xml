@@ -9,7 +9,8 @@
         android:id="@+id/imageButton"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/ic_like"/>
+        android:background="@drawable/ic_autorenew_black_48dp"
+        android:onClick="refreshSuggestion"/>
 
     <parisdescartes.pjs4.swipeCards.view.CardContainer
         android:id="@+id/layoutview"
