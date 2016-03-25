@@ -17,10 +17,25 @@
 
 package parisdescartes.pjs4.swipeCards.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.facebook.AccessToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import parisdescartes.pjs4.ErelationService;
+import parisdescartes.pjs4.classItems.IdUser;
+import parisdescartes.pjs4.classItems.ResponseService;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
 
 public class CardModel {
 
@@ -30,19 +45,8 @@ public class CardModel {
 	private Drawable cardLikeImageDrawable;
 	private Drawable cardDislikeImageDrawable;
 	private Integer idUser;
-
-    private OnCardDismissedListener mOnCardDismissedListener = new CardModel.OnCardDismissedListener() {
-		@Override
-		public void onLike() {
-			Log.i("Swipeable Cards", "I like the card "+getTitle());
-
-		}
-
-		@Override
-		public void onDislike() {
-			Log.i("Swipeable Cards","I dislike the card "+getTitle());
-		}
-	};
+	private Context context;
+    private OnCardDismissedListener mOnCardDismissedListener = null;
 
     private OnClickListener mOnClickListener = new CardModel.OnClickListener() {
 		@Override
@@ -61,21 +65,23 @@ public class CardModel {
     }
 
 	public CardModel() {
-		this(null, null, (Drawable)null, null);
+		this(null, null, (Drawable)null, null, null);
 	}
 
-	public CardModel(String title, String description, Drawable cardImage, Integer idUser) {
+	public CardModel(String title, String description, Drawable cardImage, Integer idUser, Context context) {
 		this.title = title;
 		this.description = description;
 		this.cardImageDrawable = cardImage;
 		this.idUser = idUser;
+		this.context = context;
 	}
 
-	public CardModel(String title, String description, Bitmap cardImage, Integer idUSer) {
+	public CardModel(String title, String description, Bitmap cardImage, Integer idUser, Context context) {
 		this.title = title;
 		this.description = description;
 		this.cardImageDrawable = new BitmapDrawable(null, cardImage);
-		this.idUser = idUSer;
+		this.idUser = idUser;
+		this.context = context;
 	}
 
 	public String getTitle() {
@@ -136,4 +142,8 @@ public class CardModel {
     public OnClickListener getOnClickListener() {
         return this.mOnClickListener;
     }
+
+	public Context getContext() {
+		return context;
+	}
 }

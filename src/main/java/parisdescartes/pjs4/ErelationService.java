@@ -4,6 +4,7 @@ package parisdescartes.pjs4;
 import java.util.ArrayList;
 
 import parisdescartes.pjs4.classItems.Group;
+import parisdescartes.pjs4.classItems.IdUser;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.classItems.Skill;
@@ -82,11 +83,11 @@ public interface ErelationService {
 	
 	//Accepter 
 	@POST("/match/accept")
-	void matchAccept(@Header("Token") String token, @Body User user, Callback<ResponseService> callback);
+	void matchAccept(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseService> callback);
 
 	//Refuser
 	@POST("/match/refuse")
-    void matchRefuse(@Header("Token") String token, @Body User user, Callback<ResponseService> callback);
+    void matchRefuse(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseService> callback);
 	
 	
 

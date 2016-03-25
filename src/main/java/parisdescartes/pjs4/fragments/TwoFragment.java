@@ -42,6 +42,7 @@ public class TwoFragment extends Fragment {
             "Yann", "Zoé"
     };
 
+
     public TwoFragment() {
         // Required empty public constructor
     }

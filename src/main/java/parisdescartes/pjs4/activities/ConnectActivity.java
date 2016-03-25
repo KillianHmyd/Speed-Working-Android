@@ -126,7 +126,7 @@ public class ConnectActivity extends Activity {
                         }
                         else {
                             db.insertProfile(profil, false);
-                            sharedpreferences.edit().putInt("idUser", user.getIdUser());
+                            sharedpreferences.edit().putLong("idUser", user.getIdUser()).commit();
                             erelationConnect.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
                                 @Override
                                 public void success(ArrayList<Group> groups, Response response) {
