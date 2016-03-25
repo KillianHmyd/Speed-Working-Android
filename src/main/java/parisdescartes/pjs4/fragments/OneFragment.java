@@ -138,7 +138,7 @@ public class OneFragment extends Fragment {
         return new CardModel.OnClickListener() {
             @Override
             public void OnClickListener() {
-                Toast.makeText(context, idUser, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, String.valueOf(idUser), Toast.LENGTH_SHORT).show();
             }
         };
     }

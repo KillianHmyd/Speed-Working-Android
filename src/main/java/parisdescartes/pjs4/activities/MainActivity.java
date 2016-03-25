@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         ((TextView)nvDrawer.getHeaderView(0).findViewById(R.id.nav_header_text)).setText(profil.getFirstname() + " " + profil.getLastname());
-        Picasso.with(this).load(profil.getPicture()).into(((ImageView)nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
+
+        Picasso.with(this).load(profil.getPicture()).into(((ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
         setupDrawerContent(nvDrawer);
 
 
@@ -80,7 +81,33 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new CustomViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch(position){
+                    case 0:
+                        viewPager.setSwipeable(false);
+                        break;
+                    case 1:
+                        viewPager.setSwipeable(true);
+                        break;
+                    case 2:
+                        viewPager.setSwipeable(true);
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -158,12 +185,10 @@ public class MainActivity extends AppCompatActivity {
                 break; */
             case R.id.nav_second:
                 //TODO Faire la about us activity
-                /*
                 intent = new Intent(MainActivity.this, AboutUs.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
-                */
         }
 
         // Highlight the selected item, update the title, and close the drawer
