@@ -26,7 +26,7 @@ import retrofit.http.Query;
  */
 public interface ErelationService {
 
-    public static final String ENDPOINT = "http://safe-reaches-73660.herokuapp.com/api";
+    public static final String ENDPOINT = "http://192.168.1.89:8080/api";
 
 	// l'utilisateur qui se connecte
     @GET("/user")

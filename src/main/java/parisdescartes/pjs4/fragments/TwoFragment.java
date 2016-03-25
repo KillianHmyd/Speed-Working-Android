@@ -59,7 +59,7 @@ public class TwoFragment extends Fragment {
         //mListView.setAdapter(adapter);
 
         GroupAdapter adapter = new GroupAdapter(getActivity(), listGroups);
-        mListView.setAdapter(adapter);
+        //mListView.setAdapter(adapter);
         return view;
     }
 

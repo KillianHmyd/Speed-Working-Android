@@ -14,19 +14,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import parisdescartes.pjs4.CustomViewPager;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.fragments.*;
+import parisdescartes.pjs4.swipeCards.view.CardContainer;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
 
-    private ViewPager viewPager;
+    private CustomViewPager viewPager;
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (CustomViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
