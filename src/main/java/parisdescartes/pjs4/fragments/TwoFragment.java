@@ -72,13 +72,13 @@ public class TwoFragment extends Fragment {
         listGroups = eRelationDbHelper.getAllGroups(); //Récupération des groupes
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_two, container, false);
-
+        mListView = (ListView)view.findViewById(R.id.listViewOfGroups);
         //Test
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
         //mListView.setAdapter(adapter);
 
         GroupAdapter adapter = new GroupAdapter(getActivity(), listGroups);
-        //mListView.setAdapter(adapter);
+        mListView.setAdapter(adapter);
 
         //Mise en place de l'interaction des clicks + groupes
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
