@@ -56,10 +56,6 @@ public class TwoFragment extends Fragment {
                 build().
                 create(ErelationService.class);
 
-        //Test de données, on ne garde pas ça après
-        if (eRelationDbHelper.insertGroup(new Group(1,"TestGrp","Ceci est un premier test",1,false,null,null,null)))
-            Toast.makeText(getContext(), "Groupe ajouté", Toast.LENGTH_SHORT).show();
-
         listGroups = eRelationDbHelper.getAllGroups(); //Récupération des groupes
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_two, container, false);
