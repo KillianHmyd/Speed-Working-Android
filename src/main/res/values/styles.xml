@@ -15,6 +15,7 @@
         <item name="colorPrimary">@color/background</item>
         <item name="colorPrimaryDark">@color/blueFacebook</item>
         <item name="colorAccent">@color/darkBlueFacebook</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
     <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
         <item name="android:windowContentTransitions">true</item>

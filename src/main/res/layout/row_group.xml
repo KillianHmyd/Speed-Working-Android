@@ -1,4 +1,4 @@
-<RelativeLayoutLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -33,4 +33,4 @@
         tools:text="DescriptionGroup"
         />
 
-</RelativeLayoutLayout>
+</RelativeLayout>
