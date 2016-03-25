@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -101,6 +102,7 @@ public class OneFragment extends Fragment {
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             CardModel cardModel = new CardModel(p.getFirstname() + " " + p.getLastname(), "Description goes here", bitmap, p.getIdUser(), getContext());
                             cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
+                            cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
                             adapter.add(cardModel);
                             if (suggestions.indexOf(p) + 1 == suggestions.size())
                                 mCardContainer.setAdapter(adapter);
@@ -130,6 +132,15 @@ public class OneFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public CardModel.OnClickListener getOnClickListener(final Context context, final int idUser){
+        return new CardModel.OnClickListener() {
+            @Override
+            public void OnClickListener() {
+                Toast.makeText(context, idUser, Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     public CardModel.OnCardDismissedListener getOnCardDismissedListener(final Context context, final int idUser){
