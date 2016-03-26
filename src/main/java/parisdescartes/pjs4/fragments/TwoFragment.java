@@ -64,8 +64,11 @@ public class TwoFragment extends Fragment {
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
         //mListView.setAdapter(adapter);
 
-        GroupAdapter adapter = new GroupAdapter(getActivity(), listGroups);
-        mListView.setAdapter(adapter);
+        if(listGroups != null){
+            GroupAdapter adapter = new GroupAdapter(getActivity(), listGroups);
+            mListView.setAdapter(adapter);
+        }
+
 
         //Mise en place de l'interaction des clicks + groupes
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

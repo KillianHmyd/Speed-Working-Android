@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -76,7 +77,6 @@ public class OneFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_one, container, false);
-
         mCardContainer = (CardContainer) view.findViewById(R.id.layoutview);
 
         Gson gson = new GsonBuilder()
@@ -177,7 +177,7 @@ public class OneFragment extends Fragment {
             Picasso.with(getContext()).load(p.getPicture()).into(new com.squareup.picasso.Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    CardModel cardModel = new CardModel(p.getFirstname() + " " + p.getLastname(), "Description goes here", bitmap, p.getIdUser(), getContext());
+                    CardModel cardModel = new CardModel(p.getFirstname(), "Description goes here", bitmap, p.getIdUser(), getContext());
                     cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
                     cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
                     adapter.add(cardModel);

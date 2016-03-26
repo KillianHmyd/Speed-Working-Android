@@ -63,9 +63,11 @@ public class ThreeFragment extends Fragment {
         //Test
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
         //mListView.setAdapter(adapter);
+        if(listConversations != null){
+            ConversationAdapter adapter = new ConversationAdapter(getActivity(), listConversations);
+            mListView.setAdapter(adapter);
+        }
 
-        ConversationAdapter adapter = new ConversationAdapter(getActivity(), listConversations);
-        mListView.setAdapter(adapter);
 
         //Mise en place de l'interaction des clicks + groupes
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
