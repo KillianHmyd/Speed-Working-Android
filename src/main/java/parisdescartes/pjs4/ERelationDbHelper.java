@@ -97,17 +97,18 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
 
     public static final String ERelation_CREATE_CONVERSATIONS_TABLE =
             "create table CONVERSATIONS (" +
-                    "idConv INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
+                    "idConv INTEGER PRIMARY KEY NOT NULL, " +
                     "nameConv TEXT NOT NULL" +
             ")"
             ;
 
     public static final String ERelation_CREATE_ACCESSCONV_TABLE =
             "create table ACCESSCONV (" +
-                    "idConv INTEGER PRIMARY KEY NOT NULL," +
-                    "idUser INTEGER PRIMARY KEY NOT NULL," +
-                    "foreign key(idUser) references users(idUser)," +
-                    "foreign key(idConv) references conversation(idConv)" +
+                    "idConv INTEGER NOT NULL," +
+                    "idUser INTEGER NOT NULL," +
+                    "FOREIGN KEY(idUser) REFERENCES USERS(idUser)," +
+                    "FOREIGN KEY(idConv) REFERENCES CONVERSATIONS(idConv)," +
+                    "PRIMARY KEY(idConv, idUser)"+
                     ")"
             ;
 
