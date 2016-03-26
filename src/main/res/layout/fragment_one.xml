@@ -31,7 +31,8 @@
         android:id="@+id/button_accept"
         android:layout_below="@+id/layoutview"
         android:layout_toStartOf="@+id/imageButton"
-        android:layout_marginEnd="34dp" />
+        android:layout_marginEnd="34dp"
+        android:onClick="accept"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -41,6 +42,7 @@
         android:layout_marginBottom="70dp"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/imageButton"
-        android:layout_marginStart="40dp" />
+        android:layout_marginStart="40dp"
+        android:onClick="refuse"/>
 
 </RelativeLayout>

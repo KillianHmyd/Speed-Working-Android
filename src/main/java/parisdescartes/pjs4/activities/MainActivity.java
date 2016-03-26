@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.SystemClock;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -264,23 +266,37 @@ public class MainActivity extends AppCompatActivity {
             public void success(ArrayList<Profil> profils, Response response) {
                 viewPager = (CustomViewPager) findViewById(R.id.viewpager);
                 Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
-                if(viewPager.getCurrentItem() == 0 && page != null){
-                    ((OneFragment)page).setSuggestionsCards(profils);
+                if (viewPager.getCurrentItem() == 0 && page != null) {
+                    ((OneFragment) page).setSuggestionsCards(profils);
                     view.clearAnimation();
-                    ((ImageButton)view).setEnabled(true);
+                    ((ImageButton) view).setEnabled(true);
                     Toast.makeText(getApplicationContext(), "Chargement fini", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                ((ImageButton)view).setEnabled(true);
+                ((ImageButton) view).setEnabled(true);
                 view.clearAnimation();
                 errorDialog("Impossible de se connecter au serveur");
             }
         });
 
 
+    }
+
+    public void accept(View view){
+        viewPager = (CustomViewPager) findViewById(R.id.viewpager);
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+        CardContainer layoutView =(CardContainer) ((OneFragment) page).getView().findViewById(R.id.layoutview);
+        layoutView.leave(1000, 45);
+    }
+
+    public void refuse(View view){
+        viewPager = (CustomViewPager) findViewById(R.id.viewpager);
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+        CardContainer layoutView =(CardContainer) ((OneFragment) page).getView().findViewById(R.id.layoutview);
+        layoutView.leave(-1000, 45);
     }
 
 

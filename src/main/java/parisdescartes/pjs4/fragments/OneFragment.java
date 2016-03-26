@@ -98,7 +98,6 @@ public class OneFragment extends Fragment {
             @Override
             public void failure(RetrofitError error) {
                 System.out.println(error);
-                progress.dismiss();
                 ((MainActivity) getActivity()).errorDialog("Connexion au serveur impossible.");
                 ((MainActivity) getActivity()).errorDialog(error.getMessage());
             }
