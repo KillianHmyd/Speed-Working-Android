@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.SystemClock;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,11 +18,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,7 +42,6 @@ import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.fragments.*;
 import parisdescartes.pjs4.swipeCards.view.CardContainer;
-import parisdescartes.pjs4.swipeCards.view.SimpleCardStackAdapter;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -63,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
     private Profil profil;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferencesUser;
+    private SharedPreferences sharedPreferencesDate;
     private ERelationDbHelper db;
     ErelationService erelationService;
 
@@ -71,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sharedPreferences  = getSharedPreferences("USER", Context.MODE_PRIVATE);
+        sharedPreferencesUser = getSharedPreferences("USER", Context.MODE_PRIVATE);
+        sharedPreferencesDate = getSharedPreferences("DATE", Context.MODE_PRIVATE);
         db = ((Application)getApplication()).getDb();
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -81,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 setConverter(new GsonConverter(gson)).
                 build().
                 create(ErelationService.class);
-        profil = db.getProfile(sharedPreferences.getLong("idUser", 0));
+        profil = db.getProfile(sharedPreferencesUser.getLong("idUser", 0));
         //NAVIGATION DRAWER PART
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -297,6 +295,10 @@ public class MainActivity extends AppCompatActivity {
         Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
         CardContainer layoutView =(CardContainer) ((OneFragment) page).getView().findViewById(R.id.layoutview);
         layoutView.leave(-1000, 45);
+    }
+
+    public void openProfile(View view){
+        errorDialog("Pas encore implémenté nigga");
     }
 
 

@@ -31,8 +31,10 @@ import com.google.gson.GsonBuilder;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 
 import parisdescartes.pjs4.Application;
@@ -56,14 +58,16 @@ public class ConnectActivity extends Activity {
     private ERelationDbHelper db;
     private CallbackManager callbackManager;
     private ProgressDialog progress;
-    private SharedPreferences sharedpreferences;
+    private SharedPreferences sharedpreferencesUser;
+    private SharedPreferences sharedpreferencesDate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-        sharedpreferences  = getSharedPreferences("USER", Context.MODE_PRIVATE);
+        sharedpreferencesUser = getSharedPreferences("USER", Context.MODE_PRIVATE);
+        sharedpreferencesDate = getSharedPreferences("DATE", Context.MODE_PRIVATE);
         setContentView(R.layout.activity_connect);
         startVideo();
         if (AccessToken.getCurrentAccessToken() != null) {
@@ -72,7 +76,7 @@ public class ConnectActivity extends Activity {
         } else {
             ((Application) getApplication()).resetDb();
             db = ((Application) getApplication()).getDb();
-            SharedPreferences.Editor editor = sharedpreferences.edit();
+            SharedPreferences.Editor editor = sharedpreferencesUser.edit();
             editor.clear();
             editor.commit();
         }
@@ -89,12 +93,6 @@ public class ConnectActivity extends Activity {
     @Override
     public void onPause(){
         super.onPause();
-       /*if (AccessToken.getCurrentAccessToken() != null) {
-            LoginManager.getInstance().logOut();
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.clear();
-            editor.commit();
-        }*/
     }
 
     public Context getContext(){
@@ -115,6 +113,7 @@ public class ConnectActivity extends Activity {
             @Override
             public void success(final User user, Response response) {
                 db.insertUser(user);
+                sharedpreferencesDate.edit().putString("user", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()).toString()).commit();
                 erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), user.getIdUser(), new Callback<Profil>() {
                     @Override
                     public void success(Profil profil, Response response) {
@@ -125,12 +124,15 @@ public class ConnectActivity extends Activity {
                         }
                         else {
                             db.insertProfile(profil, false);
-                            sharedpreferences.edit().putLong("idUser", user.getIdUser()).commit();
+                            sharedpreferencesUser.edit().putLong("idUser", user.getIdUser()).commit();
+                            sharedpreferencesDate.edit().putString("profil", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()).toString()).commit();
                             erelationConnect.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
                                 @Override
                                 public void success(ArrayList<Group> groups, Response response) {
                                     for (Group g : groups) {
                                         db.insertGroup(g);
+                                        sharedpreferencesDate.edit().putString("group"+g.getIdGroup(), new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                                                .format(Calendar.getInstance().getTime()).toString()).commit();
                                         for(Contributor c : g.getContributors()){
                                             db.insertUserToGroup(c.getIdUser(), c.getIdGroup());
                                         }

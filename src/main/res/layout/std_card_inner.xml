@@ -49,7 +49,7 @@
         android:layout_alignBottom="@+id/description"
         android:layout_below="@+id/divider_bottom"
         android:background="@color/card_bg"
-        />
+        android:id="@+id/view" />
 
     <TextView
         android:id="@+id/description"
@@ -65,6 +65,19 @@
         tools:text="This is the description, it is a long description, as you can see"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/imageButton_profile" />
+
+    <ImageButton
+        android:id="@+id/imageButton_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="10dp"
+        android:src="@drawable/people"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/view"
+        android:onClick="openProfile"/>
 
 </RelativeLayout>
