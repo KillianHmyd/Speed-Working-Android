@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 import parisdescartes.pjs4.classItems.Contributor;
+import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
+import parisdescartes.pjs4.classItems.Message;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.Skill;
 import parisdescartes.pjs4.classItems.User;
@@ -85,12 +87,28 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             ;
 
     public static final String ERelation_CREATE_MESSAGES_TABLE =
-            "create table MESSAGE (" +
+            "create table MESSAGES (" +
                     "idMsg INTEGER PRIMARY KEY NOT NULL, " +
                     "msgContent TEXT NOT NULL," +
                     "idConv INTEGER NOT NULL," +
                     "idUser INTEGER NOT NULL" +
             ")"
+            ;
+
+    public static final String ERelation_CREATE_CONVERSATIONS_TABLE =
+            "create table CONVERSATIONS (" +
+                    "idConv INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " +
+                    "nameConv TEXT NOT NULL" +
+            ")"
+            ;
+
+    public static final String ERelation_CREATE_ACCESSCONV_TABLE =
+            "create table ACCESSCONV (" +
+                    "idConv INTEGER PRIMARY KEY NOT NULL," +
+                    "idUser INTEGER PRIMARY KEY NOT NULL," +
+                    "foreign key(idUser) references users(idUser)," +
+                    "foreign key(idConv) references conversation(idConv)" +
+                    ")"
             ;
 
     //CONSTRUCTOR
@@ -104,11 +122,12 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         db.execSQL(ERelation_CREATE_USER_TABLE);
         db.execSQL(ERelation_CREATE_PROFIL_TABLE);
         db.execSQL(ERelation_CREATE_GROUPS_TABLE);
-        db.execSQL(ERelation_CREATE_MESSAGES_TABLE);
-        db.execSQL(ERelation_CREATE_OWNSKILL_TABLE);
         db.execSQL(ERelation_CREATE_SKILL_TABLE);
+        db.execSQL(ERelation_CREATE_OWNSKILL_TABLE);
         db.execSQL(ERelation_CREATE_ACCESSGRP_TABLE);
-
+        db.execSQL(ERelation_CREATE_MESSAGES_TABLE);
+        db.execSQL(ERelation_CREATE_CONVERSATIONS_TABLE);
+        db.execSQL(ERelation_CREATE_ACCESSCONV_TABLE);
     }
 
 
@@ -119,8 +138,10 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS GROUPS");
         db.execSQL("DROP TABLE IF EXISTS SKILL");
         db.execSQL("DROP TABLE IF EXISTS OWNSKILL");
-        db.execSQL("DROP TABLE IF EXISTS MESSAGES");
         db.execSQL("DROP TABLE IF EXISTS ACCESSGRP");
+        db.execSQL("DROP TABLE IF EXISTS MESSAGES");
+        db.execSQL("DROP TABLE IF EXISTS CONVERSATIONS");
+        db.execSQL("DROP TABLE IF EXISTS ACCESSCONV");
         onCreate(db);
     }
 
@@ -134,7 +155,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("tokenFacebook", user.getTokenFacebook());
         contentValues.put("lastActivity", user.getLastActivity().toString());
 
-        long result = db.insert("USER", null, contentValues);
+        long result = db.insertWithOnConflict("USER", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             return false;
         }else{
@@ -165,8 +186,8 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         else
             match=0;
         contentValues.put("matched", match);
-        System.out.println("IDUSER INSERT : "+profile.getIdUser());
-        long result = db.insert("PROFIL", null, contentValues);
+        System.out.println("IDUSER INSERT : " + profile.getIdUser());
+        long result = db.insertWithOnConflict("PROFIL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             System.out.println("Pas ok");
             return false;
@@ -184,7 +205,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public Profil getProfile(long idUser){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from PROFIL WHERE idUser = ?", new String[]{idUser + ""}) ;
-        System.out.println("IDUSER GET : "+idUser);
+        System.out.println("IDUSER GET : " + idUser);
         if(result.getCount() == 0){
             return null;
         }
@@ -229,7 +250,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("idUser", user.getIdUser());
         contentValues.put("nameSkill", skillName);
 
-        long result = db.insert("SKILL", null, contentValues);
+        long result = db.insertWithOnConflict("SKILL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             return false;
         }else{
@@ -269,7 +290,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("idUser", user.getIdUser());
         contentValues.put("idSkill", skill.getIdSkill());
 
-        long result = db.insert("SKILL", null, contentValues);
+        long result = db.insertWithOnConflict("SKILL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             return false;
         }else{
@@ -297,9 +318,9 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("presentation", group.getPresentation());
         contentValues.put("idLeader", group.getIdLeader());
         contentValues.put("finish", group.isFinish());
-        db.insert("GROUPS", null, contentValues);
+        db.insertWithOnConflict("GROUPS", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
 
-        long result = db.insert("GROUPS", null, contentValues);
+        long result = db.insertWithOnConflict("GROUPS", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             return false;
         }else{
@@ -386,7 +407,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("idUser", idUser);
         contentValues.put("idGroup", idGroup);
 
-        long result = db.insert("ACCESSGRP", null, contentValues);
+        long result = db.insertWithOnConflict("ACCESSGRP", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             return false;
         }else{
@@ -413,5 +434,202 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             contributors.add(new Contributor(Integer.valueOf(result.getInt(0)), Integer.valueOf(result.getInt(1))));
         }
         return contributors;
+    }
+
+    /** MESSAGES **/
+    public boolean insertMessage(Message message){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("idMsg", message.getIdMsg());
+        contentValues.put("msgContent", message.getMsgContent());
+        contentValues.put("idConv", message.getIdConv());
+        contentValues.put("idUser", message.getIdUser());
+        db.insertWithOnConflict("MESSAGES", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+
+        long result = db.insertWithOnConflict("MESSAGES", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        if(result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean updateMessage(Message message){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("idMsg", message.getIdMsg());
+        contentValues.put("msgContent", message.getMsgContent());
+        contentValues.put("idConv", message.getIdConv());
+        contentValues.put("idUser", message.getIdUser());
+
+        long result = db.update("MESSAGES", contentValues, "idMsg = ?", new String[]{message.getIdMsg() + ""});
+        if(result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public Integer deleteMessage(long id){
+        SQLiteDatabase db = getWritableDatabase() ;
+        return db.delete("MESSAGES", "idMsg" + " = ?", new String[]{String.valueOf(id)});
+    }
+
+    public Message getMessage(int idMsg){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from MESSAGES WHERE idMsg = ?", new String[] {idMsg+ ""});
+
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        result.moveToFirst();
+        boolean endOfProject = result.getInt(4) == 1 ? true : false ;
+        Message message= new Message(
+                result.getInt(0),
+                result.getString(1),
+                result.getInt(2),
+                result.getInt(3),
+                null,
+                null
+        );
+        return message;
+    }
+
+    public ArrayList<Message> getAllMessages(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from MESSAGES", null);
+        ArrayList<Message> messages = new ArrayList<>();
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        while(result.moveToNext()){
+            Message message= new Message(
+                    result.getInt(0),
+                    result.getString(1),
+                    result.getInt(2),
+                    result.getInt(3),
+                    null,
+                    null
+            );
+            messages.add(message);
+        }
+        return messages;
+    }
+
+    /** CONVERSATION **/
+    public boolean insertConversation(Conversation conv){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("idConv", conv.getIdConv());
+        contentValues.put("nameConv", conv.getNameConv());
+
+        long result = db.insertWithOnConflict("CONVERSATION", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        if(result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean updateConv(Conversation conv){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("idConv", conv.getIdConv());
+        contentValues.put("nameConv", conv.getNameConv());
+
+        long result = db.update("CONVERSATIONS", contentValues, "idConv = ?", new String[]{conv.getIdConv() + ""});
+        if(result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public Integer deleteConv(long idConv){
+        SQLiteDatabase db = getWritableDatabase() ;
+        return db.delete("CONVERSATIONS", "idConv" + " = ?", new String[]{String.valueOf(idConv)});
+    }
+
+    public Conversation getConv(int idConv){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from CONVERSATIONS WHERE idConv = ?", new String[] {idConv + ""});
+
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        result.moveToFirst();
+        Conversation conv = new Conversation(
+                result.getInt(0),
+                result.getString(1),
+                null,
+                null
+        );
+        return conv;
+    }
+    
+    public Message getLastUpdate(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("SELECT * FROM MESSAGES m, CONVERSATIONS c" +
+                "WHERE m.idConv = c.idConv", null);
+
+        result.moveToFirst();
+        Message message = new Message(
+                result.getInt(0),
+                result.getString(1),
+                result.getInt(2),
+                result.getInt(3),
+                null,
+                null
+        );
+        return message;
+    }
+
+    public ArrayList<Conversation> getAllConv(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from CONVERSATIONS", null);
+
+        ArrayList<Conversation> conversations = new ArrayList<Conversation>();
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        while(result.moveToNext()) {
+            Conversation conv = new Conversation(
+                    result.getInt(0),
+                    result.getString(1),
+                    null,
+                    null
+            );
+            conversations.add(conv);
+        }
+        return conversations;
+    }
+
+    /** ACCESSCONV **/
+    public boolean insertUserToConv(int idUser, int idConv){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("idConv", idConv);
+        contentValues.put("idUser", idUser);
+
+        long result = db.insertWithOnConflict("ACCESSCONV", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        if(result == -1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public Integer deleteUserToConv(User user, Conversation conv){
+        SQLiteDatabase db = getWritableDatabase() ;
+        return db.delete("ACCESSCONV", "idConv" + "= ?" + "AND idUser = ?",
+                new String[]{
+                        String.valueOf(user.getIdUser()),
+                        String.valueOf(conv.getIdConv())
+                }
+        );
     }
 }
