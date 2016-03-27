@@ -27,7 +27,7 @@ import retrofit.http.Query;
  */
 public interface ErelationService {
 
-    public static final String ENDPOINT = "http://51.255.30.137/api";
+    public static final String ENDPOINT = "http://51.255.30.141/api";
 
 	// l'utilisateur qui se connecte
     @GET("/user")

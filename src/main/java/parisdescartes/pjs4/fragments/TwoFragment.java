@@ -1,7 +1,9 @@
 package parisdescartes.pjs4.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +12,25 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
+import parisdescartes.pjs4.activities.MainActivity;
 import parisdescartes.pjs4.classItems.Group;
+import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 
 
@@ -30,8 +41,10 @@ public class TwoFragment extends Fragment {
 
     ERelationDbHelper eRelationDbHelper;
     ErelationService eRelationService ;
-    List<Group> listGroups;
+    ArrayList<Group> listGroups;
     ListView mListView;
+    GroupAdapter adapter;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public TwoFragment() {
         // Required empty public constructor
@@ -60,14 +73,20 @@ public class TwoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_two, container, false);
         mListView = (ListView)view.findViewById(R.id.listViewOfGroups);
-        //Test
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
-        //mListView.setAdapter(adapter);
+        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
 
-        if(listGroups != null){
-            GroupAdapter adapter = new GroupAdapter(getActivity(), listGroups);
-            mListView.setAdapter(adapter);
+        if(listGroups == null){
+            listGroups = new ArrayList<>();
         }
+        adapter = new GroupAdapter(getActivity(), listGroups);
+        mListView.setAdapter(adapter);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshGroups();
+            }
+        });
 
 
         //Mise en place de l'interaction des clicks + groupes
@@ -78,6 +97,27 @@ public class TwoFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void refreshGroups(){
+        eRelationService.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
+            @Override
+            public void success(ArrayList<Group> groups, Response response) {
+                for(Group g : groups) {
+                    eRelationDbHelper.insertGroup(g);
+                }
+                adapter.clear();
+                adapter.addAll(groups);
+                adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                swipeRefreshLayout.setRefreshing(false);
+                ((MainActivity)getActivity()).errorDialog("Connexion au serveur impossible");
+            }
+        });
     }
 
 }

@@ -27,22 +27,22 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Accepter"
-        android:id="@+id/button_accept"
-        android:layout_below="@+id/layoutview"
-        android:layout_toStartOf="@+id/imageButton"
-        android:layout_marginEnd="34dp"
-        android:onClick="accept"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Refuser"
         android:id="@+id/button_refuse"
         android:layout_marginBottom="70dp"
         android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/imageButton"
+        android:layout_marginEnd="34dp"
+        android:onClick="refuse"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accepter"
+        android:id="@+id/button_accept"
+        android:layout_below="@+id/layoutview"
         android:layout_toEndOf="@+id/imageButton"
         android:layout_marginStart="40dp"
-        android:onClick="refuse"/>
+        android:onClick="accept"/>
 
 </RelativeLayout>

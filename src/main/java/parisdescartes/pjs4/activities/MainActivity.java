@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPreferencesUser = getSharedPreferences("USER", Context.MODE_PRIVATE);
-        sharedPreferencesDate = getSharedPreferences("DATE", Context.MODE_PRIVATE);
         db = ((Application)getApplication()).getDb();
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
