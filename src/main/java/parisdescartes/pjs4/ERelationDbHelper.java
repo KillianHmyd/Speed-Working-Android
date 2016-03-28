@@ -6,7 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import parisdescartes.pjs4.classItems.Contributor;
 import parisdescartes.pjs4.classItems.Conversation;
@@ -55,6 +60,8 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                     "presentation TEXT NOT NULL," +
                     "idLeader INTEGER NOT NULL," +
                     "finish INTEGER DEFAULT 0," +
+                    "idConv INTEGER NOT NULL," +
+                    "FOREIGN KEY(idConv) REFERENCES CONVERSATIONS(idConv)," +
                     "FOREIGN KEY (idLeader) REFERENCES PROFIL(idUser)" +
             ")"
             ;
@@ -88,17 +95,26 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
 
     public static final String ERelation_CREATE_MESSAGES_TABLE =
             "create table MESSAGES (" +
-                    "idMsg INTEGER PRIMARY KEY NOT NULL, " +
+                    "idMsg INTEGER NOT NULL, " +
                     "msgContent TEXT NOT NULL," +
                     "idConv INTEGER NOT NULL," +
-                    "idUser INTEGER NOT NULL" +
+                    "idUser INTEGER NOT NULL," +
+                    "date TEXT NOT NULL," +
+                    "FOREIGN KEY(idUser) REFERENCES USERS(idUser)," +
+                    "FOREIGN KEY(idConv) REFERENCES CONVERSATIONS(idConv)," +
+                    "PRIMARY KEY(idMsg)"+
             ")"
             ;
 
     public static final String ERelation_CREATE_CONVERSATIONS_TABLE =
             "create table CONVERSATIONS (" +
-                    "idConv INTEGER PRIMARY KEY NOT NULL, " +
-                    "nameConv TEXT NOT NULL" +
+                    "idConv INTEGER NOT NULL, " +
+                    "nameConv TEXT NOT NULL, " +
+                    "lastMessage TEXT," +
+                    "dateMessage TEXT," +
+                    "idMsg INT,"+
+                    "idUserMsg INT,"+
+                    "PRIMARY KEY(idConv)"+
             ")"
             ;
 
@@ -319,6 +335,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("presentation", group.getPresentation());
         contentValues.put("idLeader", group.getIdLeader());
         contentValues.put("finish", group.isFinish());
+        contentValues.put("idConv", group.getIdConv());
         db.insertWithOnConflict("GROUPS", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
 
         long result = db.insertWithOnConflict("GROUPS", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
@@ -368,6 +385,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                 result.getInt(3),
                 endOfProject,
                 null,
+                result.getInt(5),
                 null,
                 null
         );
@@ -392,6 +410,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                     result.getInt(3),
                     endOfProject,
                     null,
+                    result.getInt(5),
                     null,
                     null
             );
@@ -442,9 +461,10 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("idMsg", message.getIdMsg());
-        contentValues.put("msgContent", message.getMsgContent());
+        contentValues.put("msgContent", message.getString());
         contentValues.put("idConv", message.getIdConv());
         contentValues.put("idUser", message.getIdUser());
+        contentValues.put("date", message.getDate().toString());
         db.insertWithOnConflict("MESSAGES", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
 
         long result = db.insertWithOnConflict("MESSAGES", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
@@ -459,7 +479,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("idMsg", message.getIdMsg());
-        contentValues.put("msgContent", message.getMsgContent());
+        contentValues.put("msgContent", message.getString());
         contentValues.put("idConv", message.getIdConv());
         contentValues.put("idUser", message.getIdUser());
 
@@ -476,7 +496,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("MESSAGES", "idMsg" + " = ?", new String[]{String.valueOf(id)});
     }
 
-    public Message getMessage(int idMsg){
+    public Message getMessage(int idMsg) throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from MESSAGES WHERE idMsg = ?", new String[] {idMsg+ ""});
 
@@ -485,19 +505,21 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             return null;
         }
         result.moveToFirst();
-        boolean endOfProject = result.getInt(4) == 1 ? true : false ;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
+        Date date =  df.parse(result.getString(4));
         Message message= new Message(
                 result.getInt(0),
                 result.getString(1),
                 result.getInt(2),
                 result.getInt(3),
+                date,
                 null,
                 null
         );
         return message;
     }
 
-    public ArrayList<Message> getAllMessages(){
+    public ArrayList<Message> getAllMessages() throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from MESSAGES", null);
         ArrayList<Message> messages = new ArrayList<>();
@@ -505,12 +527,15 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             //show message "AUCUN USER CORREPONDANT A CET ID
             return null;
         }
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
         while(result.moveToNext()){
+            Date date =  df.parse(result.getString(4));
             Message message= new Message(
                     result.getInt(0),
                     result.getString(1),
                     result.getInt(2),
                     result.getInt(3),
+                    date,
                     null,
                     null
             );
@@ -525,8 +550,11 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("idConv", conv.getIdConv());
         contentValues.put("nameConv", conv.getNameConv());
+        contentValues.put("lastMessage", conv.getLastMessage().getString());
+        contentValues.put("dateMessage", conv.getLastMessage().getDate().toString());
+        contentValues.put("idUserMsg", conv.getLastMessage().getIdUser());
 
-        long result = db.insertWithOnConflict("CONVERSATION", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        long result = db.insertWithOnConflict("CONVERSATIONS", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             return false;
         }else{
@@ -553,7 +581,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("CONVERSATIONS", "idConv" + " = ?", new String[]{String.valueOf(idConv)});
     }
 
-    public Conversation getConv(int idConv){
+    public Conversation getConv(int idConv) throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from CONVERSATIONS WHERE idConv = ?", new String[] {idConv + ""});
 
@@ -562,33 +590,39 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             return null;
         }
         result.moveToFirst();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
+        Date date = df.parse(result.getString(3));
         Conversation conv = new Conversation(
                 result.getInt(0),
                 result.getString(1),
+                new Message(result.getInt(4), result.getString(2), -1, result.getInt(5), date,null,null),
                 null,
                 null
         );
         return conv;
     }
     
-    public Message getLastUpdate(){
+    public Message getLastUpdate() throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("SELECT * FROM MESSAGES m, CONVERSATIONS c" +
                 "WHERE m.idConv = c.idConv", null);
 
         result.moveToFirst();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
+        Date date = df.parse(result.getString(4));
         Message message = new Message(
                 result.getInt(0),
                 result.getString(1),
                 result.getInt(2),
                 result.getInt(3),
+                date,
                 null,
                 null
         );
         return message;
     }
 
-    public ArrayList<Conversation> getAllConv(){
+    public ArrayList<Conversation> getAllConv() throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from CONVERSATIONS", null);
 
@@ -597,10 +631,12 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             //show message "AUCUN USER CORREPONDANT A CET ID
             return null;
         }
+        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
         while(result.moveToNext()) {
-            Conversation conv = new Conversation(
+            Date date = df.parse(result.getString(3));            Conversation conv = new Conversation(
                     result.getInt(0),
                     result.getString(1),
+                    new Message(result.getInt(4), result.getString(2), -1, result.getInt(5), date,null,null),
                     null,
                     null
             );

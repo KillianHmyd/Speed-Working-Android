@@ -452,7 +452,7 @@ public class CardContainer extends AdapterView<ListAdapter> {
      * @param velocityY
      */
     public void leave(float velocityX, float velocityY) {
-        if (!locked) {
+        if (!locked && mListAdapter != null) {
             locked = true; // Lock swipe until current card is dismissed
 
             final View topCard = mTopCard;

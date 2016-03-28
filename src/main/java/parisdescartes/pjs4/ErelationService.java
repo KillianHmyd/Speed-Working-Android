@@ -3,6 +3,7 @@ package parisdescartes.pjs4;
 
 import java.util.ArrayList;
 
+import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.IdUser;
 import parisdescartes.pjs4.classItems.Profil;
@@ -88,7 +89,10 @@ public interface ErelationService {
 	//Refuser
 	@POST("/match/refuse")
     void matchRefuse(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseService> callback);
-	
+
+    //Récupérer conversation
+    @GET("/conversation")
+    void getConversation(@Header("Token") String token, Callback<ArrayList<Conversation>> callback);
 	
 
 }

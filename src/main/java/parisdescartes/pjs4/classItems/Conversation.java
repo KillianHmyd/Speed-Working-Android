@@ -1,20 +1,24 @@
 package parisdescartes.pjs4.classItems;
 
+import java.util.Date;
+
 /**
  * Created by Vocxtir on 26/03/2016.
  */
 public class Conversation {
     private Integer idConv ;
     private String nameConv ;
+    private Message lastMessage;
 
     private Integer code ;
     private String message;
 
-    public Conversation(Integer idConv, String nameConv, Integer code, String message) {
+    public Conversation(Integer idConv, String nameConv, Message lastMessage, Integer code, String message) {
         this.idConv = idConv;
         this.nameConv = nameConv;
         this.code = code;
         this.message = message;
+        this.lastMessage = lastMessage;
     }
 
     public Integer getIdConv() {
@@ -31,5 +35,9 @@ public class Conversation {
 
     public String getMessage() {
         return message;
+    }
+
+    public Message getLastMessage() {
+        return lastMessage;
     }
 }

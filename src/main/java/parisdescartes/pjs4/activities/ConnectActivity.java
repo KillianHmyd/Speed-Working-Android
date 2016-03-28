@@ -42,6 +42,7 @@ import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Contributor;
+import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
@@ -131,14 +132,34 @@ public class ConnectActivity extends Activity {
                                             db.insertUserToGroup(c.getIdUser(), c.getIdGroup());
                                         }
                                     }
-                                    Intent intent = new Intent(getContext(), MainActivity.class);
-                                    startActivity(intent);
+                                    erelationConnect.getConversation(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Conversation>>() {
+
+                                        @Override
+                                        public void success(ArrayList<Conversation> conversations, Response response) {
+                                            for(Conversation c : conversations){
+                                                db.insertConversation(c);
+                                                db.insertMessage(c.getLastMessage());
+                                            }
+                                            Intent intent = new Intent(getContext(), MainActivity.class);
+                                            startActivity(intent);
+                                        }
+
+                                        @Override
+                                        public void failure(RetrofitError error) {
+                                            System.out.println(error);
+                                            LoginManager.getInstance().logOut();
+                                            ((Application) getApplication()).resetDb();
+                                            progress.dismiss();
+                                            errorDialog(error.getMessage());
+                                        }
+                                    });
                                 }
 
                                 @Override
                                 public void failure(RetrofitError error) {
                                     System.out.println(error);
                                     LoginManager.getInstance().logOut();
+                                    ((Application)getApplication()).resetDb();
                                     progress.dismiss();
                                     errorDialog(error.getMessage());
                                 }
@@ -150,6 +171,7 @@ public class ConnectActivity extends Activity {
                     public void failure(RetrofitError error) {
                         System.out.println(error);
                         LoginManager.getInstance().logOut();
+                        ((Application)getApplication()).resetDb();
                         progress.dismiss();
                         errorDialog("Connexion au serveur impossible.");
                     }
@@ -161,6 +183,7 @@ public class ConnectActivity extends Activity {
             public void failure(RetrofitError error) {
                 System.out.println(error);
                 LoginManager.getInstance().logOut();
+                ((Application)getApplication()).resetDb();
                 progress.dismiss();
                 errorDialog("Connexion au serveur impossible.");
             }

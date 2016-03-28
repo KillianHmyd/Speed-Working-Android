@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import parisdescartes.pjs4.Application;
+import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Conversation;
 
@@ -18,9 +20,11 @@ import parisdescartes.pjs4.classItems.Conversation;
  */
 public class ConversationAdapter extends ArrayAdapter<Conversation> {
 
+    ERelationDbHelper db;
 
-    public ConversationAdapter(Context context, List<Conversation> conversations) {
+    public ConversationAdapter(Context context, List<Conversation> conversations, ERelationDbHelper db) {
         super(context, 0, conversations);
+        this.db = db;
     }
 
     @Override
@@ -42,7 +46,7 @@ public class ConversationAdapter extends ArrayAdapter<Conversation> {
         //getItem(position) va récupérer l'item [position] de la List<message> message
         Conversation conv = getItem(position);
         viewHolder.convName.setText(conv.getNameConv());
-        //viewHolder.lastMessage.setText(conv.get());
+        viewHolder.lastMessage.setText(db.getProfile(conv.getLastMessage().getIdUser()).getFirstname() +": "+conv.getLastMessage().getString());
 
         return convertView;
     }
