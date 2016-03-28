@@ -229,12 +229,19 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         }
 
         result.moveToFirst();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
+        Date date = null;
+        try {
+            date = df.parse(result.getString(4));
+        } catch (ParseException e) {
+
+        }
         Profil profil = new Profil(
                 result.getInt(0),
                 result.getString(1),
                 result.getString(2),
                 result.getString(3),
-                null, //TODO convert String to Date
+                date,
                 result.getString(5),
                 result.getString(6),
                 null,
@@ -258,13 +265,20 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public ArrayList<Profil> getMatchedProfile(){
         Cursor result = getMatchedProfile_data();
         ArrayList<Profil> profils = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
+        Date date = null;
         while(result.moveToNext()){
+            try {
+                date = df.parse(result.getString(4));
+            } catch (ParseException e) {
+
+            }
             Profil profil = new Profil(
                     result.getInt(0),
                     result.getString(1),
                     result.getString(2),
                     result.getString(3),
-                    null, //TODO convert String to Date
+                    date,
                     result.getString(5),
                     result.getString(6),
                     null,

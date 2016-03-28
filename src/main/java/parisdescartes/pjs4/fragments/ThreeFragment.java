@@ -3,11 +3,14 @@ package parisdescartes.pjs4.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -80,6 +83,7 @@ public class ThreeFragment extends Fragment {
         }
         adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
         mListView.setAdapter(adapter);
+        mListView.setEmptyView(view.findViewById(R.id.emptyElementChat));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

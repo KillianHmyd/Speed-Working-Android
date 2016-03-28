@@ -1,7 +1,6 @@
 package parisdescartes.pjs4.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -17,10 +16,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
@@ -74,13 +69,12 @@ public class TwoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_two, container, false);
         mListView = (ListView)view.findViewById(R.id.listViewOfGroups);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
-
         if(listGroups == null){
             listGroups = new ArrayList<>();
         }
         adapter = new GroupAdapter(getActivity(), listGroups);
         mListView.setAdapter(adapter);
-
+        mListView.setEmptyView(view.findViewById(R.id.emptyElementGroup));
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
