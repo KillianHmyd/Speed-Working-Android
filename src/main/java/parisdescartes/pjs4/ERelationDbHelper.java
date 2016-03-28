@@ -249,10 +249,30 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public Cursor getMatchedProfile(){
+    public Cursor getMatchedProfile_data(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from PROFIL WHERE matched = 1", null);
         return result;
+    }
+
+    public ArrayList<Profil> getMatchedProfile(){
+        Cursor result = getMatchedProfile_data();
+        ArrayList<Profil> profils = new ArrayList<>();
+        while(result.moveToNext()){
+            Profil profil = new Profil(
+                    result.getInt(0),
+                    result.getString(1),
+                    result.getString(2),
+                    result.getString(3),
+                    null, //TODO convert String to Date
+                    result.getString(5),
+                    result.getString(6),
+                    null,
+                    null
+            );
+            profils.add(profil);
+        }
+        return  profils;
     }
 
     public Cursor getUnmatchedProfile(){
