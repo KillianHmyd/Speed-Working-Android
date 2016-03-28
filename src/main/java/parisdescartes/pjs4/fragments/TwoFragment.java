@@ -103,6 +103,8 @@ public class TwoFragment extends Fragment {
         eRelationService.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
             @Override
             public void success(ArrayList<Group> groups, Response response) {
+                eRelationDbHelper.deleteAllGroup();
+                eRelationDbHelper.deleteAllUserToConv();
                 for(Group g : groups) {
                     eRelationDbHelper.insertGroup(g);
                 }

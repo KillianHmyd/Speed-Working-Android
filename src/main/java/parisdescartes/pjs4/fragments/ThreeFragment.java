@@ -69,38 +69,6 @@ public class ThreeFragment extends Fragment {
                 build().
                 create(ErelationService.class);
 
-        try {
-            listConversations = eRelationDbHelper.getAllConv(); //Récupération des Conversations
-            for(Conversation c : listConversations){
-                Message m = c.getLastMessage();
-                eRelationDbHelper.insertMessage(m);
-                Profil p = eRelationDbHelper.getProfile(m.getIdUser());
-                if(p == null) {
-
-                    eRelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), m.getIdUser(), new Callback<Profil>() {
-                        @Override
-                        public void success(Profil profil, Response response) {
-                            System.out.println(profil.getIdUser());
-                            if (profil.getEmail() == null)
-                                eRelationDbHelper.insertProfile(profil, false);
-                            else
-                                eRelationDbHelper.insertProfile(profil, true);
-
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            System.out.println("fail");
-                        }
-                    });
-                }
-                else
-                    System.out.println(p.getFirstname());
-            }
-        } catch (ParseException e) {
-            System.out.println(e.getMessage());
-            ((MainActivity)getActivity()).errorDialog(e.getMessage());
-        }
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_three, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
@@ -109,10 +77,44 @@ public class ThreeFragment extends Fragment {
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
         //mListView.setAdapter(adapter);
         if(listConversations != null){
-            adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
-            mListView.setAdapter(adapter);
-        }
+            try {
+                listConversations = eRelationDbHelper.getAllConv(); //Récupération des Conversations
+                for(Conversation c : listConversations){
+                    Message m = c.getLastMessage();
+                    eRelationDbHelper.insertMessage(m);
+                    Profil p = eRelationDbHelper.getProfile(m.getIdUser());
+                    if(p == null) {
 
+                        eRelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), m.getIdUser(), new Callback<Profil>() {
+                            @Override
+                            public void success(Profil profil, Response response) {
+                                System.out.println(profil.getIdUser());
+                                if (profil.getEmail() == null)
+                                    eRelationDbHelper.insertProfile(profil, false);
+                                else
+                                    eRelationDbHelper.insertProfile(profil, true);
+
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                System.out.println("fail");
+                            }
+                        });
+                    }
+                    else
+                        System.out.println(p.getFirstname());
+                }
+            } catch (ParseException e) {
+                System.out.println(e.getMessage());
+                ((MainActivity)getActivity()).errorDialog(e.getMessage());
+            }
+
+        }
+        else
+            listConversations = new ArrayList<>();
+        adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
+        mListView.setAdapter(adapter);
 
         //Mise en place de l'interaction des clicks + groupes
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -137,6 +139,9 @@ public class ThreeFragment extends Fragment {
             @Override
             public void success(ArrayList<Conversation> conversations, Response response) {
                 for (Conversation c : conversations) {
+                    eRelationDbHelper.deleteAllConv();
+                    eRelationDbHelper.deleteAllMessage();
+                    eRelationDbHelper.deleteAllUserToConv();
                     eRelationDbHelper.insertConversation(c);
                     eRelationDbHelper.insertMessage(c.getLastMessage());
                     Message m = c.getLastMessage();
@@ -158,7 +163,8 @@ public class ThreeFragment extends Fragment {
                             }
                         });
                 }
-                adapter.clear();
+                if(adapter != null)
+                    adapter.clear();
                 adapter.addAll(conversations);
                 adapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);

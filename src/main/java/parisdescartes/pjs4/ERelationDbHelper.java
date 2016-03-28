@@ -368,6 +368,11 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("GROUPS", "idGroup" + " = ?", new String[]{String.valueOf(id)});
     }
 
+    public Integer deleteAllGroup(){
+        SQLiteDatabase db = getWritableDatabase() ;
+        return db.delete("GROUPS", null, null);
+    }
+
     public Group getGroup(int idGroup){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from GROUPS WHERE idGroup = ?", new String[] {idGroup + ""});
@@ -496,6 +501,11 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("MESSAGES", "idMsg" + " = ?", new String[]{String.valueOf(id)});
     }
 
+    public Integer deleteAllMessage(){
+        SQLiteDatabase db = getWritableDatabase() ;
+        return db.delete("MESSAGES", null, null);
+    }
+
     public Message getMessage(int idMsg) throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from MESSAGES WHERE idMsg = ?", new String[] {idMsg+ ""});
@@ -579,6 +589,11 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public Integer deleteConv(long idConv){
         SQLiteDatabase db = getWritableDatabase() ;
         return db.delete("CONVERSATIONS", "idConv" + " = ?", new String[]{String.valueOf(idConv)});
+    }
+
+    public Integer deleteAllConv(){
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete("CONVERSATIONS", null, null);
     }
 
     public Conversation getConv(int idConv) throws ParseException {
@@ -668,5 +683,10 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                         String.valueOf(conv.getIdConv())
                 }
         );
+    }
+
+    public Integer deleteAllUserToConv(){
+        SQLiteDatabase db = getWritableDatabase() ;
+        return db.delete("ACCESSCONV", null,null);
     }
 }
