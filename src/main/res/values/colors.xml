@@ -8,6 +8,9 @@
     <color name="card_bg">#EBEBEB</color>
     <color name="card_outline">#D0D0CE</color>
     <color name="orange">#ff5719</color>
+    <color name="accept">#6ABD45</color>
+    <color name="refuse">#FF6655</color>
+    <color name="transparent">#00000000</color>
     <integer-array name="androidcolors">
         <item>@color/blueFacebook</item>
         <item>@color/darkBlueFacebook</item>

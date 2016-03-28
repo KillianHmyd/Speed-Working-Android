@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 
@@ -100,6 +103,44 @@ public class OneFragment extends Fragment {
                 System.out.println(error);
                 ((MainActivity) getActivity()).errorDialog("Connexion au serveur impossible.");
                 ((MainActivity) getActivity()).errorDialog(error.getMessage());
+            }
+        });
+
+        ImageButton refuseButton = (ImageButton)view.findViewById(R.id.button_refuse);
+        ImageButton acceptButton = (ImageButton)view.findViewById(R.id.button_accept);
+
+        int colorRefuse = getResources().getColor(R.color.refuse);
+        int colorAccept = getResources().getColor(R.color.accept);
+        refuseButton.getDrawable().setColorFilter(colorRefuse, PorterDuff.Mode.SRC_ATOP);
+        acceptButton.getDrawable().setColorFilter(colorAccept, PorterDuff.Mode.SRC_ATOP);
+
+        refuseButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ((ImageButton) view).getDrawable().setColorFilter(Color.argb(100, 255, 102, 85), PorterDuff.Mode.MULTIPLY);
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        ((ImageButton) view).getDrawable().setColorFilter(Color.argb(255, 255, 102, 85), PorterDuff.Mode.MULTIPLY); // White Tint
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+            }
+        });
+
+        acceptButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ((ImageButton)view).getDrawable().setColorFilter(Color.argb(100, 106,189,69), PorterDuff.Mode.MULTIPLY);
+                        return false; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        ((ImageButton)view).getDrawable().setColorFilter(Color.argb(255, 106,189,69), PorterDuff.Mode.MULTIPLY); // White Tint
+                        return false; // if you want to handle the touch event
+                }
+                return false;
             }
         });
 

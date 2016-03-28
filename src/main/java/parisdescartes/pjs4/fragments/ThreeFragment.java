@@ -76,7 +76,7 @@ public class ThreeFragment extends Fragment {
         //Test
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
         //mListView.setAdapter(adapter);
-        if(listConversations != null){
+        if(listConversations != null && listConversations.size() > 0){
             try {
                 listConversations = eRelationDbHelper.getAllConv(); //Récupération des Conversations
                 for(Conversation c : listConversations){
