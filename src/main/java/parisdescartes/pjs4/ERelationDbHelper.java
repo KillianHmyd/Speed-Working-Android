@@ -17,6 +17,7 @@ import parisdescartes.pjs4.classItems.Contributor;
 import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Message;
+import parisdescartes.pjs4.classItems.Participant;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.Skill;
 import parisdescartes.pjs4.classItems.User;
@@ -560,6 +561,10 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("idConv", conv.getIdConv());
         contentValues.put("nameConv", conv.getNameConv());
+        ArrayList<Participant> participants = conv.getParticipants();
+        for(Participant p : participants){
+            insertUserToConv(p.getIdUser(), p.getIdConv());
+        }
         if(conv.getLastMessage() != null) {
             contentValues.put("lastMessage", conv.getLastMessage().getString());
             contentValues.put("dateMessage", conv.getLastMessage().getDate().toString());
@@ -648,6 +653,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             //show message "AUCUN USER CORREPONDANT A CET ID
             return null;
         }
+
         DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
         while(result.moveToNext()) {
             Date date = df.parse(result.getString(3));            Conversation conv = new Conversation(
@@ -657,6 +663,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                     null,
                     null
             );
+            conv.setParticipants(getAllUserToConv(result.getInt(0)));
             conversations.add(conv);
         }
         return conversations;
@@ -675,6 +682,16 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         }else{
             return true;
         }
+    }
+
+    public ArrayList<Participant> getAllUserToConv(int idConv){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from ACCESSCONV WHERE idConv = ?", new String[]{idConv + ""});
+        ArrayList<Participant> participants = new ArrayList<>();
+        while(result.moveToNext()){
+            participants.add(new Participant(Integer.valueOf(result.getInt(1)), Integer.valueOf(result.getInt(0))));
+        }
+        return participants;
     }
 
     public Integer deleteUserToConv(User user, Conversation conv){

@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private Profil profil;
     private SharedPreferences sharedPreferencesUser;
-    private SharedPreferences sharedPreferencesDate;
     private ERelationDbHelper db;
     ErelationService erelationService;
 

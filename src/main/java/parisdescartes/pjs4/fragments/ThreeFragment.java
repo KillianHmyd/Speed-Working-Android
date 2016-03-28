@@ -26,6 +26,7 @@ import parisdescartes.pjs4.activities.MainActivity;
 import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Message;
+import parisdescartes.pjs4.classItems.Participant;
 import parisdescartes.pjs4.classItems.Profil;
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -73,49 +74,7 @@ public class ThreeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_three, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         mListView = (ListView)view.findViewById(R.id.listViewOfConv);
-        //Test
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
-        //mListView.setAdapter(adapter);
-        if(listConversations != null && listConversations.size() > 0){
-            try {
-                listConversations = eRelationDbHelper.getAllConv(); //Récupération des Conversations
-                for(Conversation c : listConversations){
-                    Message m = c.getLastMessage();
-                    eRelationDbHelper.insertMessage(m);
-                    Profil p = eRelationDbHelper.getProfile(m.getIdUser());
-                    if(p == null) {
-
-                        eRelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), m.getIdUser(), new Callback<Profil>() {
-                            @Override
-                            public void success(Profil profil, Response response) {
-                                System.out.println(profil.getIdUser());
-                                if (profil.getEmail() == null)
-                                    eRelationDbHelper.insertProfile(profil, false);
-                                else
-                                    eRelationDbHelper.insertProfile(profil, true);
-
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-                                System.out.println("fail");
-                            }
-                        });
-                    }
-                    else
-                        System.out.println(p.getFirstname());
-                }
-            } catch (ParseException e) {
-                System.out.println(e.getMessage());
-                ((MainActivity)getActivity()).errorDialog(e.getMessage());
-            }
-
-        }
-        else
-            listConversations = new ArrayList<>();
-        adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
-        mListView.setAdapter(adapter);
-
+        refreshChats();
         //Mise en place de l'interaction des clicks + groupes
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -138,6 +97,7 @@ public class ThreeFragment extends Fragment {
         eRelationService.getConversation(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Conversation>>() {
             @Override
             public void success(ArrayList<Conversation> conversations, Response response) {
+                listConversations = conversations;
                 for (Conversation c : conversations) {
                     eRelationDbHelper.deleteAllConv();
                     eRelationDbHelper.deleteAllMessage();
@@ -164,13 +124,37 @@ public class ThreeFragment extends Fragment {
                                 }
                             });
                     }
+                    for(Participant participant : c.getParticipants()){
+                        Profil p = eRelationDbHelper.getProfile(participant.getIdUser());
+                        if(p == null)
+                            eRelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), participant.getIdUser(), new Callback<Profil>() {
+                                @Override
+                                public void success(Profil profil, Response response) {
+                                    if(profil.getEmail() == null)
+                                        eRelationDbHelper.insertProfile(profil, false);
+                                    else
+                                        eRelationDbHelper.insertProfile(profil, true);
+
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+
+                                }
+                            });
+                    }
 
                 }
-                if(adapter != null)
+                if(adapter == null) {
+                    adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
+                    mListView.setAdapter(adapter);
+                }
+                else {
                     adapter.clear();
-                adapter.addAll(conversations);
-                adapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
+                    adapter.addAll(listConversations);
+                    adapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
 
             @Override
