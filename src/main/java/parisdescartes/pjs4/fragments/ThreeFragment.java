@@ -81,6 +81,8 @@ public class ThreeFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        if(listConversations == null)
+            listConversations = new ArrayList<>();
         adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
         mListView.setAdapter(adapter);
         mListView.setEmptyView(view.findViewById(R.id.emptyElementChat));
