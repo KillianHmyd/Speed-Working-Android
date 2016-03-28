@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import parisdescartes.pjs4.Application;
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
@@ -58,9 +59,10 @@ public class ThreeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        eRelationDbHelper = new ERelationDbHelper(getActivity());
-
-        //instanciation de l'API node
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_three, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
+        mListView = (ListView)view.findViewById(R.id.listViewOfConv);
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 .create();
@@ -70,12 +72,14 @@ public class ThreeFragment extends Fragment {
                 build().
                 create(ErelationService.class);
 
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_three, container, false);
-        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
-        mListView = (ListView)view.findViewById(R.id.listViewOfConv);
-        refreshChats();
-        //Mise en place de l'interaction des clicks + groupes
+        eRelationDbHelper = ((Application)getActivity().getApplication()).getDb();
+        try {
+            listConversations = eRelationDbHelper.getAllConv();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
+        mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -145,16 +149,12 @@ public class ThreeFragment extends Fragment {
                     }
 
                 }
-                if(adapter == null) {
-                    adapter = new ConversationAdapter(getActivity(), listConversations, eRelationDbHelper);
-                    mListView.setAdapter(adapter);
-                }
-                else {
+
                     adapter.clear();
                     adapter.addAll(listConversations);
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
-                }
+
             }
 
             @Override

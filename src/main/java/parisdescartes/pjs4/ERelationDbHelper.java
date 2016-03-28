@@ -656,10 +656,16 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
 
         DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
         while(result.moveToNext()) {
-            Date date = df.parse(result.getString(3));            Conversation conv = new Conversation(
+            Date date = null;
+            Message m = null;
+            if(result.getString(3) != null) {
+                date = df.parse(result.getString(3));
+                new Message(result.getInt(4), result.getString(2), -1, result.getInt(5), date,null,null);
+            }
+            Conversation conv = new Conversation(
                     result.getInt(0),
                     result.getString(1),
-                    new Message(result.getInt(4), result.getString(2), -1, result.getInt(5), date,null,null),
+                    m,
                     null,
                     null
             );

@@ -44,6 +44,7 @@ import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Contributor;
 import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
+import parisdescartes.pjs4.classItems.Participant;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.classItems.User;
@@ -138,7 +139,25 @@ public class ConnectActivity extends Activity {
                                         public void success(ArrayList<Conversation> conversations, Response response) {
                                             for(Conversation c : conversations){
                                                 db.insertConversation(c);
-                                                db.insertMessage(c.getLastMessage());
+                                                if(c.getLastMessage() != null)
+                                                    db.insertMessage(c.getLastMessage());
+                                                for(Participant p : c.getParticipants()){
+                                                    erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), p.getIdUser(), new Callback<Profil>() {
+                                                        @Override
+                                                        public void success(Profil profil, Response response) {
+                                                            if(profil.getEmail() == null)
+                                                                db.insertProfile(profil, false);
+                                                            else
+                                                                db.insertProfile(profil, true);
+
+                                                        }
+
+                                                        @Override
+                                                        public void failure(RetrofitError error) {
+
+                                                        }
+                                                    });
+                                                }
                                             }
                                             Intent intent = new Intent(getContext(), MainActivity.class);
                                             startActivity(intent);
