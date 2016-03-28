@@ -560,9 +560,11 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("idConv", conv.getIdConv());
         contentValues.put("nameConv", conv.getNameConv());
-        contentValues.put("lastMessage", conv.getLastMessage().getString());
-        contentValues.put("dateMessage", conv.getLastMessage().getDate().toString());
-        contentValues.put("idUserMsg", conv.getLastMessage().getIdUser());
+        if(conv.getLastMessage() != null) {
+            contentValues.put("lastMessage", conv.getLastMessage().getString());
+            contentValues.put("dateMessage", conv.getLastMessage().getDate().toString());
+            contentValues.put("idUserMsg", conv.getLastMessage().getIdUser());
+        }
 
         long result = db.insertWithOnConflict("CONVERSATIONS", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){

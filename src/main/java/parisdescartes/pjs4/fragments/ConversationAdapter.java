@@ -14,6 +14,7 @@ import parisdescartes.pjs4.Application;
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Conversation;
+import parisdescartes.pjs4.classItems.Message;
 import parisdescartes.pjs4.classItems.Profil;
 
 /**
@@ -47,13 +48,16 @@ public class ConversationAdapter extends ArrayAdapter<Conversation> {
         //getItem(position) va récupérer l'item [position] de la List<message> message
         Conversation conv = getItem(position);
         viewHolder.convName.setText(conv.getNameConv());
-        Profil p = db.getProfile(conv.getLastMessage().getIdUser());
+        Message m = conv.getLastMessage();
         String s;
-        if(p.getEmail() != null)
-            s = p.getFirstname() + " " + p.getLastname();
-        else
-            s = p.getFirstname() + " " + conv.getNameConv();
-        viewHolder.lastMessage.setText(s);
+        if(m != null) {
+            Profil p = db.getProfile(conv.getLastMessage().getIdUser());
+            if (p.getEmail() != null)
+                s = p.getFirstname() + " " + p.getLastname() + ": " + m.getString();
+            else
+                s = p.getFirstname() + " " + conv.getNameConv() + ": " + m.getString();
+            viewHolder.lastMessage.setText(s);
+        }
 
         return convertView;
     }

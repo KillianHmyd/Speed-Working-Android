@@ -143,25 +143,28 @@ public class ThreeFragment extends Fragment {
                     eRelationDbHelper.deleteAllMessage();
                     eRelationDbHelper.deleteAllUserToConv();
                     eRelationDbHelper.insertConversation(c);
-                    eRelationDbHelper.insertMessage(c.getLastMessage());
-                    Message m = c.getLastMessage();
-                    Profil p = eRelationDbHelper.getProfile(m.getIdUser());
-                    if(p == null)
-                        eRelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), m.getIdUser(), new Callback<Profil>() {
-                            @Override
-                            public void success(Profil profil, Response response) {
-                                if(profil.getEmail() == null)
-                                    eRelationDbHelper.insertProfile(profil, false);
-                                else
-                                    eRelationDbHelper.insertProfile(profil, true);
+                    if(c.getLastMessage() != null) {
+                        eRelationDbHelper.insertMessage(c.getLastMessage());
+                        Message m = c.getLastMessage();
+                        Profil p = eRelationDbHelper.getProfile(m.getIdUser());
+                        if(p == null)
+                            eRelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), m.getIdUser(), new Callback<Profil>() {
+                                @Override
+                                public void success(Profil profil, Response response) {
+                                    if(profil.getEmail() == null)
+                                        eRelationDbHelper.insertProfile(profil, false);
+                                    else
+                                        eRelationDbHelper.insertProfile(profil, true);
 
-                            }
+                                }
 
-                            @Override
-                            public void failure(RetrofitError error) {
+                                @Override
+                                public void failure(RetrofitError error) {
 
-                            }
-                        });
+                                }
+                            });
+                    }
+
                 }
                 if(adapter != null)
                     adapter.clear();
