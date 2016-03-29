@@ -29,15 +29,15 @@ public class CreateGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creategroup);
 
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarGroup);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarGroup);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
-        });*/
+        });
     }
 
     public void searchBetter(View view) {

@@ -15,11 +15,36 @@
         android:focusable="true"
         android:clickable="true">
 
-        <include
-            layout="@layout/toolbar"
-            android:layout_width="match_parent"
+        <android.support.v7.widget.Toolbar
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbarGroup"
             android:layout_height="wrap_content"
-            android:id="@+id/includ"/>
+            android:layout_width="match_parent"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            android:background="@color/orange">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Créer un groupe"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_title"
+                android:textSize="24sp"
+                android:textColor="@color/background" />
+            <Button
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:id="@+id/createGroupButton"
+                android:textSize="12sp"
+                android:background="@null"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:textColor="#FFF"
+                android:text="Enregistrer"/>
+        </android.support.v7.widget.Toolbar>
 
         <android.support.v4.widget.Space
             android:layout_width="wrap_content"
@@ -31,14 +56,14 @@
             android:src="@drawable/ic_bookmark_black_24dp"
             android:layout_alignBottom="@+id/nameGroup"
             android:layout_toStartOf="@+id/nameGroup"
-            android:layout_below="@+id/includ" />
+            android:layout_below="@+id/toolbarGroup" />
         <EditText
             android:id="@+id/nameGroup"
             android:layout_marginLeft="15dp"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="Donner un nom à ce groupe"
-            android:layout_below="@+id/includ"
+            android:layout_below="@+id/toolbarGroup"
             android:layout_centerHorizontal="true">
         </EditText>
         <android.support.v4.widget.Space
