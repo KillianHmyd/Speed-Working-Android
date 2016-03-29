@@ -51,14 +51,11 @@ public class ListMatch extends Fragment {
         profils = eRelationDbHelper.getMatchedProfile();
         int i = 0;
         city = new ArrayList<>();
-        for(Profil p : profils){
-            city.add(p.getFirstname());
-        }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+        MatchAdapter arrayAdapter = new MatchAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_1,
-                city );
+                profils );
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
