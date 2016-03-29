@@ -1,5 +1,6 @@
 package parisdescartes.pjs4.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,12 +15,14 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
+import parisdescartes.pjs4.activities.CreateGroup;
 import parisdescartes.pjs4.activities.MainActivity;
 import parisdescartes.pjs4.classItems.Group;
 import retrofit.Callback;
@@ -66,7 +69,7 @@ public class TwoFragment extends Fragment {
 
         listGroups = eRelationDbHelper.getAllGroups(); //Récupération des groupes
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_two, container, false);
+        final View view = inflater.inflate(R.layout.fragment_two, container, false);
         mListView = (ListView)view.findViewById(R.id.listViewOfGroups);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
         if(listGroups == null){
@@ -82,6 +85,18 @@ public class TwoFragment extends Fragment {
             }
         });
 
+
+        ListView listView = (ListView) view.findViewById(R.id.listViewOfGroups);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.attachToListView(listView);
+        fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), CreateGroup.class);
+                startActivity(intent);
+            }
+        });
 
         //Mise en place de l'interaction des clicks + groupes
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

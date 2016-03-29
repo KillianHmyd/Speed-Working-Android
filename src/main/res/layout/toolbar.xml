@@ -1,10 +1,20 @@
-<Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/toolbar"
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbarGroup"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/actionBarSize"
-    android:layout_alignParentTop="true"
-    android:background="@color/blueFacebook"
-    android:minHeight="?android:attr/actionBarSize"
-    >
+    android:fitsSystemWindows="true"
+    android:minHeight="?attr/actionBarSize"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:background="@color/orange">
 
-</Toolbar>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Créer un groupe"
+        android:layout_gravity="center"
+        android:id="@+id/toolbar_title"
+        android:textSize="24sp"
+        android:textColor="@color/background" />
+</android.support.v7.widget.Toolbar>

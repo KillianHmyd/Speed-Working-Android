@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true">
+
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/includ"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:id="@+id/spaceToolbar"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bookmark_black_24dp"
+            android:layout_alignBottom="@+id/nameGroup"
+            android:layout_toStartOf="@+id/nameGroup"
+            android:layout_below="@+id/includ" />
+        <EditText
+            android:id="@+id/nameGroup"
+            android:layout_marginLeft="15dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="Donner un nom à ce groupe"
+            android:layout_below="@+id/includ"
+            android:layout_centerHorizontal="true">
+        </EditText>
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            android:id="@+id/spaceNameGroup"
+            android:layout_below="@+id/nameGroup"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_tooltip_text_black_24dp"
+            android:layout_alignBottom="@+id/descriptionGroup"
+            android:layout_toStartOf="@+id/descriptionGroup"
+            android:layout_below="@+id/spaceNameGroup" />
+        <EditText
+            android:id="@+id/descriptionGroup"
+            android:layout_marginLeft="15dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="Donner une description à ce groupe"
+            android:layout_below="@+id/spaceNameGroup"
+            android:layout_centerHorizontal="true">
+        </EditText>
+
+        <Button
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Recherche par match"
+            android:id="@+id/buttonSearchMatch"
+            android:layout_alignBottom="@+id/buttonSearchBetter"
+            android:background="@color/orange"
+            android:textColor="@android:color/white"
+            android:onClick="searchMatch"
+            android:layout_toEndOf="@+id/spaceNameGroup" />
+
+        <Button
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="Recherche par\n potentiel meilleur"
+            android:id="@+id/buttonSearchBetter"
+            android:background="@color/orange"
+            android:textColor="@android:color/white"
+            android:layout_below="@+id/descriptionGroup"
+            android:layout_alignParentEnd="true"
+            android:onClick="searchBetter"/>
+        <FrameLayout
+            android:id="@+id/fragment_place"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/buttonSearchMatch" />
+    </RelativeLayout>
+
+</android.support.v4.widget.DrawerLayout>
