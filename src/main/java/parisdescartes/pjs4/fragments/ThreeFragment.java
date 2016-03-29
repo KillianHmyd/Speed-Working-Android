@@ -107,11 +107,12 @@ public class ThreeFragment extends Fragment {
         eRelationService.getConversation(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Conversation>>() {
             @Override
             public void success(ArrayList<Conversation> conversations, Response response) {
+                System.out.println(conversations.size());
+                eRelationDbHelper.deleteAllConv();
+                eRelationDbHelper.deleteAllMessage();
+                eRelationDbHelper.deleteAllUserToConv();
                 listConversations = conversations;
-                for (Conversation c : conversations) {
-                    eRelationDbHelper.deleteAllConv();
-                    eRelationDbHelper.deleteAllMessage();
-                    eRelationDbHelper.deleteAllUserToConv();
+                for (Conversation c : listConversations) {
                     eRelationDbHelper.insertConversation(c);
                     if(c.getLastMessage() != null) {
                         eRelationDbHelper.insertMessage(c.getLastMessage());

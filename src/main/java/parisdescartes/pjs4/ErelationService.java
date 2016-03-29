@@ -91,7 +91,7 @@ public interface ErelationService {
     void matchRefuse(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseService> callback);
 
     //Récupérer conversation
-    @GET("/conversation")
+    @GET("/conversations")
     void getConversation(@Header("Token") String token, Callback<ArrayList<Conversation>> callback);
 	
 
