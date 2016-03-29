@@ -8,8 +8,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +22,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 
@@ -75,7 +80,6 @@ public class OneFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_one, container, false);
-
         mCardContainer = (CardContainer) view.findViewById(R.id.layoutview);
 
         Gson gson = new GsonBuilder()
@@ -91,45 +95,52 @@ public class OneFragment extends Fragment {
         erelationConnect.getSuggestion(AccessToken.getCurrentAccessToken().getToken(), 10, new Callback<ArrayList<Profil>>() {
             @Override
             public void success(ArrayList<Profil> profils, Response response) {
-                suggestions = new ArrayList<Profil>();
-                final SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(getContext());
-                for (int i = profils.size() - 1; i >= 0; i--) {
-                    suggestions.add(profils.get(i));
-                }
-                for (final Profil p : suggestions) {
-                    System.out.println(p.getIdUser());
-                    Resources r = getResources();
-                    Picasso.with(getContext()).load(p.getPicture()).into(new com.squareup.picasso.Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            CardModel cardModel = new CardModel(p.getFirstname() + " " + p.getLastname(), "Description goes here", bitmap, p.getIdUser(), getContext());
-                            cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
-                            cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
-                            adapter.add(cardModel);
-                            if (suggestions.indexOf(p) + 1 == suggestions.size())
-                                mCardContainer.setAdapter(adapter);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            //TODO CHARGEMENT
-                        }
-                    });
-
-                }
+                setSuggestionsCards(profils);
             }
 
             @Override
             public void failure(RetrofitError error) {
                 System.out.println(error);
-                progress.dismiss();
                 ((MainActivity) getActivity()).errorDialog("Connexion au serveur impossible.");
                 ((MainActivity) getActivity()).errorDialog(error.getMessage());
+            }
+        });
+
+        ImageButton refuseButton = (ImageButton)view.findViewById(R.id.button_refuse);
+        ImageButton acceptButton = (ImageButton)view.findViewById(R.id.button_accept);
+
+        int colorRefuse = getResources().getColor(R.color.refuse);
+        int colorAccept = getResources().getColor(R.color.accept);
+        refuseButton.getDrawable().setColorFilter(colorRefuse, PorterDuff.Mode.SRC_ATOP);
+        acceptButton.getDrawable().setColorFilter(colorAccept, PorterDuff.Mode.SRC_ATOP);
+
+        refuseButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ((ImageButton) view).getDrawable().setColorFilter(Color.argb(100, 255, 102, 85), PorterDuff.Mode.MULTIPLY);
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        ((ImageButton) view).getDrawable().setColorFilter(Color.argb(255, 255, 102, 85), PorterDuff.Mode.MULTIPLY); // White Tint
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+            }
+        });
+
+        acceptButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ((ImageButton)view).getDrawable().setColorFilter(Color.argb(100, 106,189,69), PorterDuff.Mode.MULTIPLY);
+                        return false; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        ((ImageButton)view).getDrawable().setColorFilter(Color.argb(255, 106,189,69), PorterDuff.Mode.MULTIPLY); // White Tint
+                        return false; // if you want to handle the touch event
+                }
+                return false;
             }
         });
 
@@ -193,5 +204,39 @@ public class OneFragment extends Fragment {
                 });
             }
         };
+    }
+
+    public void setSuggestionsCards(ArrayList<Profil> profils){
+        suggestions = new ArrayList<>();
+        final SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(getContext());
+        for (int i = profils.size() - 1; i >= 0; i--) {
+            suggestions.add(profils.get(i));
+        }
+        for (final Profil p : suggestions) {
+            System.out.println(p.getIdUser());
+            Resources r = getResources();
+            Picasso.with(getContext()).load(p.getPicture()).into(new com.squareup.picasso.Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    CardModel cardModel = new CardModel(p.getFirstname(), "Description goes here", bitmap, p.getIdUser(), getContext());
+                    cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
+                    cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
+                    adapter.add(cardModel);
+                    if (suggestions.indexOf(p) + 1 == suggestions.size())
+                        mCardContainer.setAdapter(adapter);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    //TODO CHARGEMENT
+                }
+            });
+
+        }
     }
 }

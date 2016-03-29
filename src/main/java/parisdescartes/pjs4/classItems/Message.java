@@ -1,23 +1,27 @@
 package parisdescartes.pjs4.classItems;
 
+import java.util.Date;
+
 /**
  * Created by Vocxtir on 23/03/2016.
  */
 public class Message {
 
     private Integer idMsg ;
-    private String msgContent ;
+    private String string;
     private Integer idConv ;
     private Integer idUser ;
+    private Date date;
     private Integer code ;
     private String message;
 
     public Message(Integer idMsg, String msgContent, Integer idConv,
-                   Integer idUser, Integer code, String msg) {
+                   Integer idUser, Date date, Integer code, String msg) {
         this.idMsg = idMsg;
-        this.msgContent = msgContent;
+        this.string = msgContent;
         this.idConv = idConv;
         this.idUser = idUser;
+        this.date = date;
         this.code = code;
         this.message = msg;
     }
@@ -26,8 +30,12 @@ public class Message {
         return idMsg;
     }
 
-    public String getMsgContent() {
-        return msgContent;
+    public String getString() {
+        return string;
+    }
+
+    public Date getDate() {
+        return date;
     }
 
     public Integer getIdConv() {

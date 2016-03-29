@@ -13,11 +13,12 @@ public class Group {
     private String presentation;
     private boolean finish;
     private ArrayList<Contributor> contributors;
+    private Integer idConv;
     private Integer code ;
     private String message;
 
     public Group(Integer idGroup, String grpName, String description, Integer idUserLead,
-                 boolean endOfProject, ArrayList<Contributor> contributors, Integer code, String msg) {
+                 boolean endOfProject, ArrayList<Contributor> contributors, Integer idConv, Integer code, String msg) {
         this.idGroup = idGroup;
         this.idLeader = idUserLead;
         nameGroup = grpName;
@@ -26,6 +27,7 @@ public class Group {
         this.contributors = contributors;
         this.code = code;
         this.message = msg;
+        this.idConv = idConv;
     }
 
     public Integer getIdGroup() {
@@ -62,5 +64,9 @@ public class Group {
 
     public void setContributors(ArrayList<Contributor> contributors) {
         this.contributors = contributors;
+    }
+
+    public Integer getIdConv() {
+        return idConv;
     }
 }

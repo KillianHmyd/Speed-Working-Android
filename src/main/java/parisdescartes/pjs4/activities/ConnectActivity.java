@@ -31,8 +31,10 @@ import com.google.gson.GsonBuilder;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 
 import parisdescartes.pjs4.Application;
@@ -40,7 +42,9 @@ import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Contributor;
+import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
+import parisdescartes.pjs4.classItems.Participant;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.classItems.User;
@@ -56,14 +60,14 @@ public class ConnectActivity extends Activity {
     private ERelationDbHelper db;
     private CallbackManager callbackManager;
     private ProgressDialog progress;
-    private SharedPreferences sharedpreferences;
+    private SharedPreferences sharedpreferencesUser;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-        sharedpreferences  = getSharedPreferences("USER", Context.MODE_PRIVATE);
+        sharedpreferencesUser = getSharedPreferences("USER", Context.MODE_PRIVATE);
         setContentView(R.layout.activity_connect);
         startVideo();
         if (AccessToken.getCurrentAccessToken() != null) {
@@ -72,7 +76,7 @@ public class ConnectActivity extends Activity {
         } else {
             ((Application) getApplication()).resetDb();
             db = ((Application) getApplication()).getDb();
-            SharedPreferences.Editor editor = sharedpreferences.edit();
+            SharedPreferences.Editor editor = sharedpreferencesUser.edit();
             editor.clear();
             editor.commit();
         }
@@ -89,12 +93,6 @@ public class ConnectActivity extends Activity {
     @Override
     public void onPause(){
         super.onPause();
-       /*if (AccessToken.getCurrentAccessToken() != null) {
-            LoginManager.getInstance().logOut();
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.clear();
-            editor.commit();
-        }*/
     }
 
     public Context getContext(){
@@ -122,11 +120,10 @@ public class ConnectActivity extends Activity {
                             System.out.println(profil.getMessage());
                             LoginManager.getInstance().logOut();
                             progress.dismiss();
-                            errorDialog(profil.getMessage());
                         }
                         else {
                             db.insertProfile(profil, false);
-                            sharedpreferences.edit().putLong("idUser", user.getIdUser()).commit();
+                            sharedpreferencesUser.edit().putLong("idUser", user.getIdUser()).commit();
                             erelationConnect.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
                                 @Override
                                 public void success(ArrayList<Group> groups, Response response) {
@@ -136,14 +133,52 @@ public class ConnectActivity extends Activity {
                                             db.insertUserToGroup(c.getIdUser(), c.getIdGroup());
                                         }
                                     }
-                                    Intent intent = new Intent(getContext(), MainActivity.class);
-                                    startActivity(intent);
+                                    erelationConnect.getConversation(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Conversation>>() {
+
+                                        @Override
+                                        public void success(ArrayList<Conversation> conversations, Response response) {
+                                            for(Conversation c : conversations){
+                                                db.insertConversation(c);
+                                                if(c.getLastMessage() != null)
+                                                    db.insertMessage(c.getLastMessage());
+                                                for(Participant p : c.getParticipants()){
+                                                    erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), p.getIdUser(), new Callback<Profil>() {
+                                                        @Override
+                                                        public void success(Profil profil, Response response) {
+                                                            if(profil.getEmail() == null)
+                                                                db.insertProfile(profil, false);
+                                                            else
+                                                                db.insertProfile(profil, true);
+
+                                                        }
+
+                                                        @Override
+                                                        public void failure(RetrofitError error) {
+
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                            Intent intent = new Intent(getContext(), MainActivity.class);
+                                            startActivity(intent);
+                                        }
+
+                                        @Override
+                                        public void failure(RetrofitError error) {
+                                            System.out.println(error);
+                                            LoginManager.getInstance().logOut();
+                                            ((Application) getApplication()).resetDb();
+                                            progress.dismiss();
+                                            errorDialog(error.getMessage());
+                                        }
+                                    });
                                 }
 
                                 @Override
                                 public void failure(RetrofitError error) {
                                     System.out.println(error);
                                     LoginManager.getInstance().logOut();
+                                    ((Application)getApplication()).resetDb();
                                     progress.dismiss();
                                     errorDialog(error.getMessage());
                                 }
@@ -155,6 +190,7 @@ public class ConnectActivity extends Activity {
                     public void failure(RetrofitError error) {
                         System.out.println(error);
                         LoginManager.getInstance().logOut();
+                        ((Application)getApplication()).resetDb();
                         progress.dismiss();
                         errorDialog("Connexion au serveur impossible.");
                     }
@@ -166,6 +202,7 @@ public class ConnectActivity extends Activity {
             public void failure(RetrofitError error) {
                 System.out.println(error);
                 LoginManager.getInstance().logOut();
+                ((Application)getApplication()).resetDb();
                 progress.dismiss();
                 errorDialog("Connexion au serveur impossible.");
             }
@@ -201,7 +238,6 @@ public class ConnectActivity extends Activity {
                 LoginManager.getInstance().logOut();
                 progress.dismiss();
                 errorDialog("Connexion au serveur impossible.");
-                errorDialog(error.getMessage());
             }
         });
     }
@@ -212,6 +248,7 @@ public class ConnectActivity extends Activity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                System.out.println(AccessToken.getCurrentAccessToken().getToken());
                 startVideo();
                 progress = ProgressDialog.show(getContext(), "Connexion en cours",
                         "Veuillez patienter....", true);

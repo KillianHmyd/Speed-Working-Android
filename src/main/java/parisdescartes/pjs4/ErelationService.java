@@ -3,6 +3,7 @@ package parisdescartes.pjs4;
 
 import java.util.ArrayList;
 
+import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.IdUser;
 import parisdescartes.pjs4.classItems.Profil;
@@ -27,7 +28,7 @@ import retrofit.http.Query;
  */
 public interface ErelationService {
 
-    public static final String ENDPOINT = "http://172.30.46.62:8080/api";
+    public static final String ENDPOINT = "http://51.255.30.141/api";
 
 	// l'utilisateur qui se connecte
     @GET("/user")
@@ -88,7 +89,10 @@ public interface ErelationService {
 	//Refuser
 	@POST("/match/refuse")
     void matchRefuse(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseService> callback);
-	
+
+    //Récupérer conversation
+    @GET("/conversations")
+    void getConversation(@Header("Token") String token, Callback<ArrayList<Conversation>> callback);
 	
 
 }

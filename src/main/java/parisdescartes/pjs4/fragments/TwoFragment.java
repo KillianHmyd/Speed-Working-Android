@@ -1,7 +1,9 @@
 package parisdescartes.pjs4.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +12,23 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.melnykov.fab.FloatingActionButton;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
+import parisdescartes.pjs4.activities.CreateGroup;
+import parisdescartes.pjs4.activities.MainActivity;
 import parisdescartes.pjs4.classItems.Group;
+import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 
 
@@ -30,8 +39,10 @@ public class TwoFragment extends Fragment {
 
     ERelationDbHelper eRelationDbHelper;
     ErelationService eRelationService ;
-    List<Group> listGroups;
+    ArrayList<Group> listGroups;
     ListView mListView;
+    GroupAdapter adapter;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     //Données de test
     String[] prenoms = new String[]{
@@ -66,20 +77,36 @@ public class TwoFragment extends Fragment {
                 build().
                 create(ErelationService.class);
 
-        //Test de données, on ne garde pas ça après
-        if (eRelationDbHelper.insertGroup(new Group(1,"TestGrp","Ceci est un premier test",1,false,null,null,null)))
-            Toast.makeText(getContext(), "Groupe ajouté", Toast.LENGTH_SHORT).show();
-
         listGroups = eRelationDbHelper.getAllGroups(); //Récupération des groupes
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_two, container, false);
+        final View view = inflater.inflate(R.layout.fragment_two, container, false);
         mListView = (ListView)view.findViewById(R.id.listViewOfGroups);
-        //Test
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.row_group, prenoms);
-        //mListView.setAdapter(adapter);
-
-        GroupAdapter adapter = new GroupAdapter(getActivity(), listGroups);
+        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
+        if(listGroups == null){
+            listGroups = new ArrayList<>();
+        }
+        adapter = new GroupAdapter(getActivity(), listGroups);
         mListView.setAdapter(adapter);
+        mListView.setEmptyView(view.findViewById(R.id.emptyElementGroup));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshGroups();
+            }
+        });
+
+
+        ListView listView = (ListView) view.findViewById(R.id.listViewOfGroups);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.attachToListView(listView);
+        fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), CreateGroup.class);
+                startActivity(intent);
+            }
+        });
 
         //Mise en place de l'interaction des clicks + groupes
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -89,6 +116,29 @@ public class TwoFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void refreshGroups(){
+        eRelationService.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
+            @Override
+            public void success(ArrayList<Group> groups, Response response) {
+                eRelationDbHelper.deleteAllGroup();
+                eRelationDbHelper.deleteAllUserToConv();
+                for(Group g : groups) {
+                    eRelationDbHelper.insertGroup(g);
+                }
+                adapter.clear();
+                adapter.addAll(groups);
+                adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                swipeRefreshLayout.setRefreshing(false);
+                ((MainActivity)getActivity()).errorDialog("Connexion au serveur impossible");
+            }
+        });
     }
 
 }

@@ -13,9 +13,9 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/background</item>
-        <item name="colorPrimaryDark">@color/blueFacebook</item>
+        <item name="colorPrimaryDark">@color/orange</item>
         <item name="colorAccent">@color/darkBlueFacebook</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
     </style>
     <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
         <item name="android:windowContentTransitions">true</item>
