@@ -59,12 +59,15 @@ public class ConversationAdapter extends ArrayAdapter<Conversation> {
         Message m = conv.getLastMessage();
         String s;
         ArrayList<Participant> participants = conv.getParticipants();
-        if(participants.size() == 2){
-            if(participants.get(0).getIdUser() == userProfil.getIdUser()){
+        if(participants.size() > 0){
+            if(participants.get(0).getIdUser() == userProfil.getIdUser() && participants.size() > 1){
+                System.out.println("ici");
                 Picasso.with(getContext()).load(db.getProfile(participants.get(1).getIdUser()).getPicture()).into(viewHolder.avatar);
             }
-            else
+            else {
+                System.out.println("USER : " + db.getProfile(participants.get(0).getIdUser()).getFirstname() );
                 Picasso.with(getContext()).load(db.getProfile(participants.get(0).getIdUser()).getPicture()).into(viewHolder.avatar);
+            }
         }
         if(m != null) {
             Profil p = db.getProfile(conv.getLastMessage().getIdUser());

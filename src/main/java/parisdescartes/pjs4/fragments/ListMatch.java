@@ -11,26 +11,24 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import parisdescartes.pjs4.Application;
+import parisdescartes.pjs4.ERelationDbHelper;
+import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
+import parisdescartes.pjs4.classItems.Profil;
 
 /**
  * Created by Kévin on 29/03/2016.
  */
 public class ListMatch extends Fragment {
-    String[] city= {
-            "Bangalore",
-            "Chennai",
-            "Mumbai",
-            "Pune",
-            "Delhi",
-            "Jabalpur",
-            "Indore",
-            "Ranchi",
-            "Hyderabad",
-            "Ahmedabad",
-            "Kolkata",
-            "Bhopal"
-    };
+
+    ERelationDbHelper eRelationDbHelper;
+    ArrayList<Profil> profils;
+    ArrayList<String> city;
+
+
     private ListView listView;
     public ListMatch() {
         // Required empty public constructor
@@ -47,15 +45,22 @@ public class ListMatch extends Fragment {
                 R.layout.fragment_list_match, container, false);
         listView = (ListView) view.findViewById(R.id.listMatch);
         listView.setChoiceMode(listView.CHOICE_MODE_MULTIPLE);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+
+        eRelationDbHelper = ((Application)getActivity().getApplication()).getDb();
+
+        profils = eRelationDbHelper.getMatchedProfile();
+        int i = 0;
+        city = new ArrayList<>();
+
+        MatchAdapter arrayAdapter = new MatchAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_1,
-                city );
+                profils );
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 //CheckedTextView item = (CheckedTextView) view;
-                Toast.makeText(getActivity(), city[i] + " checked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), profils.get(i).getFirstname() + " checked", Toast.LENGTH_SHORT).show();
             }
         });
 

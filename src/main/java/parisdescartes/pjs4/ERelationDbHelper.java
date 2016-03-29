@@ -195,7 +195,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("lastname", profile.getLastname());
         contentValues.put("email", profile.getEmail());
         contentValues.put("gender", profile.getGender());
-        contentValues.put("birthday", profile.getBirthday().toString());
+        contentValues.put("birthday", profile.getBirthday());
         contentValues.put("email", profile.getEmail());
         contentValues.put("picture", profile.getPicture());
         int match;
@@ -241,7 +241,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                 result.getString(1),
                 result.getString(2),
                 result.getString(3),
-                date,
+                result.getString(4),
                 result.getString(5),
                 result.getString(6),
                 null,
@@ -278,7 +278,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                     result.getString(1),
                     result.getString(2),
                     result.getString(3),
-                    date,
+                    result.getString(4),
                     result.getString(5),
                     result.getString(6),
                     null,
@@ -694,7 +694,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             Message m = null;
             if(result.getString(3) != null) {
                 date = df.parse(result.getString(3));
-                new Message(result.getInt(4), result.getString(2), -1, result.getInt(5), date,null,null);
+                m = new Message(result.getInt(4), result.getString(2), -1, result.getInt(5), date,null,null);
             }
             Conversation conv = new Conversation(
                     result.getInt(0),
