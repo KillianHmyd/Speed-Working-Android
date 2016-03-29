@@ -2,9 +2,13 @@ package parisdescartes.pjs4.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
@@ -49,7 +53,6 @@ public class ListMatch extends Fragment {
         eRelationDbHelper = ((Application)getActivity().getApplication()).getDb();
 
         profils = eRelationDbHelper.getMatchedProfile();
-        int i = 0;
         city = new ArrayList<>();
 
         MatchAdapter arrayAdapter = new MatchAdapter(
@@ -63,6 +66,34 @@ public class ListMatch extends Fragment {
                 Toast.makeText(getActivity(), profils.get(i).getFirstname() + " checked", Toast.LENGTH_SHORT).show();
             }
         });
+        /*listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+            }
+        });*/
 
 
         return view;
