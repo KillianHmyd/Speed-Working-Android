@@ -41,6 +41,9 @@
             android:name=".activities.CreateGroup"
             android:theme="@style/MyMaterialTheme">
         </activity>
+        <activity
+            android:name=".activities.ProfileActivity" >
+        </activity>
     </application>
 
 </manifest>

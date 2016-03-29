@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbarProfile"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/orange">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile view"
+            android:layout_gravity="center"
+            android:id="@+id/toolbar_title"
+            android:textSize="24sp"
+            android:textColor="@color/background" />
+    </android.support.v7.widget.Toolbar>
+
+
+
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/imageViewProfile"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="45dp"
+        android:layout_below="@+id/toolbarProfile"
+        android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="FirstnameAndLastname"
+            android:id="@+id/textViewNames"
+            android:layout_alignTop="@+id/imageViewProfile"
+            android:layout_toEndOf="@+id/imageViewProfile"
+            android:textColor="#000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Mail"
+            android:id="@+id/textViewMail"
+            android:layout_alignBottom="@+id/imageViewProfile"
+            android:layout_toEndOf="@+id/imageViewProfile"
+            android:textColor="#000000" />
+    </RelativeLayout>
+</android.support.v4.widget.DrawerLayout>

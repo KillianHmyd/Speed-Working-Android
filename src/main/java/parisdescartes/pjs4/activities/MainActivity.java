@@ -92,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
 
         Picasso.with(this).load(profil.getPicture()).into(((ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
         setupDrawerContent(nvDrawer);
+        nvDrawer.getHeaderView(0).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                intent.putExtra("idUser", profil.getIdUser());
+                startActivity(intent);
+                //errorDialog("ici");
+            }
+        });
+        Picasso.with(this).load(profil.getPicture()).into(((ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
+        setupDrawerContent(nvDrawer);
 
 
         //END OF NAVIGATION DRAWER PART
@@ -279,6 +290,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public Context getContext(){
+        return this ;
     }
 
     public void accept(View view){
