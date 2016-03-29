@@ -69,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         TextView tMail  =   (TextView) findViewById(R.id.textViewMail);
         Picasso.with(this).load(profile.getPicture()).into(((ImageView) findViewById(R.id.imageViewProfile)));
 
-        tVNames.setText(profile.getFirstname() + " " + profile.getLastname());
+        tVNames.setText(profile.getFirstname() + " " + (profile.getLastname() != null ? profile.getLastname() : " "));
         tMail.setText(profile.getEmail() != null ? profile.getEmail() : "Vous n'êtes pas autorisé à voir l'email \n de cette personne");
 
 
