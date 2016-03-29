@@ -7,6 +7,7 @@ import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.IdUser;
 import parisdescartes.pjs4.classItems.Profil;
+import parisdescartes.pjs4.classItems.ResponseMatch;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.classItems.Skill;
 import parisdescartes.pjs4.classItems.User;
@@ -84,15 +85,15 @@ public interface ErelationService {
 	
 	//Accepter 
 	@POST("/match/accept")
-	void matchAccept(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseService> callback);
+	void matchAccept(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseMatch> callback);
 
 	//Refuser
 	@POST("/match/refuse")
-    void matchRefuse(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseService> callback);
+    void matchRefuse(@Header("Token") String token, @Body IdUser idUser, Callback<ResponseMatch> callback);
 
     //Récupérer conversation
     @GET("/conversations")
     void getConversation(@Header("Token") String token, Callback<ArrayList<Conversation>> callback);
-	
+
 
 }

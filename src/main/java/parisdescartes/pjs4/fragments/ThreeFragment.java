@@ -1,5 +1,7 @@
 package parisdescartes.pjs4.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -50,6 +52,7 @@ public class ThreeFragment extends Fragment {
     ListView mListView;
     ConversationAdapter adapter;
     SwipeRefreshLayout swipeRefreshLayout;
+    SharedPreferences sharedPreferences;
 
     public ThreeFragment() {
         // Required empty public constructor
@@ -65,6 +68,7 @@ public class ThreeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_three, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
+        sharedPreferences = getActivity().getSharedPreferences("USER", Context.MODE_PRIVATE);;
         mListView = (ListView)view.findViewById(R.id.listViewOfConv);
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -122,8 +126,10 @@ public class ThreeFragment extends Fragment {
                             eRelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), m.getIdUser(), new Callback<Profil>() {
                                 @Override
                                 public void success(Profil profil, Response response) {
-                                    if(profil.getEmail() == null)
+                                    System.out.println(profil.getFirstname());
+                                    if(profil.getEmail() == null || profil.getIdUser() == sharedPreferences.getLong("idUser", 0)) {
                                         eRelationDbHelper.insertProfile(profil, false);
+                                    }
                                     else
                                         eRelationDbHelper.insertProfile(profil, true);
 

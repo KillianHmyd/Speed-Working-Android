@@ -145,7 +145,7 @@ public class ConnectActivity extends Activity {
                                                     erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), p.getIdUser(), new Callback<Profil>() {
                                                         @Override
                                                         public void success(Profil profil, Response response) {
-                                                            if(profil.getEmail() == null)
+                                                            if(profil.getEmail() == null || profil.getIdUser() == sharedpreferencesUser.getLong("idUser", 0))
                                                                 db.insertProfile(profil, false);
                                                             else
                                                                 db.insertProfile(profil, true);

@@ -39,12 +39,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 
+import parisdescartes.pjs4.Application;
+import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.activities.ConnectActivity;
 import parisdescartes.pjs4.activities.MainActivity;
 import parisdescartes.pjs4.classItems.IdUser;
 import parisdescartes.pjs4.classItems.Profil;
+import parisdescartes.pjs4.classItems.ResponseMatch;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.swipeCards.model.CardModel;
 import parisdescartes.pjs4.swipeCards.view.CardContainer;
@@ -64,6 +67,7 @@ public class OneFragment extends Fragment {
     private CardContainer mCardContainer;
     private ArrayList<Profil> suggestions;
     ProgressDialog progress;
+    ERelationDbHelper db;
 
     public OneFragment() {
         // Required empty public constructor
@@ -81,7 +85,7 @@ public class OneFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_one, container, false);
         mCardContainer = (CardContainer) view.findViewById(R.id.layoutview);
-
+        db = ((Application)getActivity().getApplication()).getDb();
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 .create();
@@ -162,16 +166,30 @@ public class OneFragment extends Fragment {
 
             @Override
             public void onLike() {
-                ErelationService erelationConnect = new RestAdapter.Builder().
+                final ErelationService erelationConnect = new RestAdapter.Builder().
                         setEndpoint(ErelationService.ENDPOINT).
                         setConverter(new GsonConverter(new GsonBuilder()
                                 .create())).
                         build().
                         create(ErelationService.class);
 
-                erelationConnect.matchAccept(AccessToken.getCurrentAccessToken().getToken(), new IdUser(idUser), new Callback<ResponseService>() {
+                erelationConnect.matchAccept(AccessToken.getCurrentAccessToken().getToken(), new IdUser(idUser), new Callback<ResponseMatch>() {
                     @Override
-                    public void success(ResponseService responseService, Response response) {
+                    public void success(ResponseMatch responseMatch, Response response) {
+                        if(responseMatch.getMatched()){
+                            erelationConnect.getProfil(AccessToken.getCurrentAccessToken().getToken(), idUser, new Callback<Profil>() {
+                                @Override
+                                public void success(Profil profil, Response response) {
+                                    db.insertProfile(profil, true);
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    //((MainActivity)getActivity()).errorDialog(error.getMessage());
+                                    Toast.makeText(context, "Erreur", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                         Toast.makeText(context, "Utilisateur accepté", Toast.LENGTH_SHORT).show();
                     }
 
@@ -191,9 +209,9 @@ public class OneFragment extends Fragment {
                         build().
                         create(ErelationService.class);
 
-                erelationConnect.matchRefuse(AccessToken.getCurrentAccessToken().getToken(), new IdUser(idUser), new Callback<ResponseService>() {
+                erelationConnect.matchRefuse(AccessToken.getCurrentAccessToken().getToken(), new IdUser(idUser), new Callback<ResponseMatch>() {
                     @Override
-                    public void success(ResponseService responseService, Response response) {
+                    public void success(ResponseMatch responseMatch, Response response) {
                         Toast.makeText(context, "Utilisateur refusé", Toast.LENGTH_SHORT).show();
                     }
 

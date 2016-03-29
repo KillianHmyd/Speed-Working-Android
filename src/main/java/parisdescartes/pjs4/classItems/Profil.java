@@ -12,14 +12,14 @@ public class Profil {
     private String firstname;
     private String lastname;
     private String email;
-    private Date birthday;
+    private String birthday;
     private String gender;
     private String picture;
 
     private Integer code ;
     private String message;
 
-    public Profil(Integer idUser, String firstname, String lastname, String email, Date birthday,
+    public Profil(Integer idUser, String firstname, String lastname, String email, String birthday,
                   String gender, String picture, Integer code, String msg) {
         this.idUser = idUser;
         this.firstname = firstname;
@@ -48,7 +48,7 @@ public class Profil {
         return email;
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
