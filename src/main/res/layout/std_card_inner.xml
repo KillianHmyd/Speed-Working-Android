@@ -78,6 +78,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/view"
+        android:tag=""
         android:onClick="openProfile"/>
 
 </RelativeLayout>

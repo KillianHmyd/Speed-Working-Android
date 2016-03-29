@@ -37,7 +37,11 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import parisdescartes.pjs4.Application;
 import parisdescartes.pjs4.ERelationDbHelper;
@@ -148,6 +152,9 @@ public class OneFragment extends Fragment {
             }
         });
 
+
+
+
         return view;
     }
 
@@ -230,17 +237,39 @@ public class OneFragment extends Fragment {
         for (int i = profils.size() - 1; i >= 0; i--) {
             suggestions.add(profils.get(i));
         }
+        final Calendar today = Calendar.getInstance();
         for (final Profil p : suggestions) {
             System.out.println(p.getIdUser());
             Resources r = getResources();
             Picasso.with(getContext()).load(p.getPicture()).into(new com.squareup.picasso.Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    CardModel cardModel = new CardModel(p.getFirstname(), "Description goes here", bitmap, p.getIdUser(), getContext());
+                    System.out.println(p.getGender());
+                    String gender =  p.getGender().equals("male") ? "Homme" : "Femme";
+                    String date = "";
+                    if(p.getBirthday() != null){
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000Z'");
+                        try {
+                            Calendar dob = Calendar.getInstance();
+                            dob.setTime(df.parse(p.getBirthday()));
+                            int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+                            if (today.get(Calendar.MONTH) < dob.get(Calendar.MONTH)) {
+                                age--;
+                            } else if (today.get(Calendar.MONTH) == dob.get(Calendar.MONTH)
+                                    && today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
+                                age--;
+                            }
+                            date = ", "+age+"ans";
+                        } catch (ParseException e) {
+                            System.out.println(e.getMessage());
+                            date = "";
+                        }
+                    }
+                    CardModel cardModel = new CardModel(p.getFirstname(), gender+date , bitmap, p.getIdUser(), getContext());
                     cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
                     cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
                     adapter.add(cardModel);
-                    if (suggestions.indexOf(p) + 1 == suggestions.size())
+                    if (adapter.getCount() == suggestions.size())
                         mCardContainer.setAdapter(adapter);
                 }
 
@@ -256,5 +285,9 @@ public class OneFragment extends Fragment {
             });
 
         }
+    }
+
+    public CardContainer getmCardContainer() {
+        return mCardContainer;
     }
 }

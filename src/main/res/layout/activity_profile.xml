@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Profile view"
+            android:text="Profil"
             android:layout_gravity="center"
             android:id="@+id/toolbar_title"
             android:textSize="24sp"
@@ -36,32 +36,62 @@
 
 
     <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:id="@+id/imageViewProfile"
         android:layout_marginStart="45dp"
         android:layout_marginTop="45dp"
         android:layout_below="@+id/toolbarProfile"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:background="@color/orange"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="FirstnameAndLastname"
-            android:id="@+id/textViewNames"
+            android:text="Firstname"
+            android:id="@+id/textViewFirstname"
+            android:textColor="#000000"
             android:layout_alignTop="@+id/imageViewProfile"
-            android:layout_toEndOf="@+id/imageViewProfile"
-            android:textColor="#000000" />
+            android:layout_centerHorizontal="true" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Lastname"
+            android:id="@+id/textViewLastname"
+            android:textColor="#000000"
+            android:layout_alignTop="@+id/textViewFirstname"
+            android:layout_toEndOf="@+id/textViewFirstname" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Mail"
             android:id="@+id/textViewMail"
-            android:layout_alignBottom="@+id/imageViewProfile"
-            android:layout_toEndOf="@+id/imageViewProfile"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:layout_below="@+id/textViewAge"
+            android:layout_alignStart="@+id/textViewAge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Gender"
+            android:id="@+id/textViewGender"
+            android:textColor="#000000"
+            android:layout_below="@+id/textViewFirstname"
+            android:layout_alignStart="@+id/textViewFirstname" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Age"
+            android:id="@+id/textViewAge"
+            android:textColor="#000000"
+            android:layout_below="@+id/textViewGender"
+            android:layout_alignStart="@+id/textViewGender" />
     </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

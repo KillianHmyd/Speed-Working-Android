@@ -35,7 +35,6 @@ public class Profil {
     public Integer getIdUser() {
         return idUser;
     }
-
     public String getFirstname() {
         return firstname;
     }

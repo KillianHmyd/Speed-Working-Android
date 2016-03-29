@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +16,11 @@ import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
@@ -54,6 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
                 public void success(Profil profil, Response response) {
                     eRelationDbHelper.insertProfile(profil, profil.getEmail() == null? false : true);
                     profile = profil;
+                    init();
                 }
 
                 @Override
@@ -63,20 +70,45 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         }
+        else{
+            init();
+        }
 
+    }
+
+    public void init(){
         //Mise en place des informations sur le Layout
-        TextView tVNames=   (TextView) findViewById(R.id.textViewNames);
+        TextView tVFirstname=   (TextView) findViewById(R.id.textViewFirstname);
+        TextView tVLastname=   (TextView) findViewById(R.id.textViewLastname);
         TextView tMail  =   (TextView) findViewById(R.id.textViewMail);
-        Picasso.with(this).load(profile.getPicture()).into(((ImageView) findViewById(R.id.imageViewProfile)));
+        TextView tGender = (TextView) findViewById(R.id.textViewGender);
+        TextView tAge = (TextView) findViewById(R.id.textViewAge);
+        Picasso.with(getContext()).load(profile.getPicture()).into(((ImageView) findViewById(R.id.imageViewProfile)));
 
-        tVNames.setText(profile.getFirstname() + " " + (profile.getLastname() != null ? profile.getLastname() : " "));
-        tMail.setText(profile.getEmail() != null ? profile.getEmail() : "Vous n'êtes pas autorisé à voir l'email \n de cette personne");
-
-
-
-
-
-
+        tVFirstname.setText(profile.getFirstname());
+        tVLastname.setText(profile.getLastname() != null ? " "+profile.getLastname() : "");
+        tMail.setText(profile.getEmail() != null ? profile.getEmail() : "");
+        tGender.setText(profile.getGender().equals("male") ? "Homme" : "Femme");
+        if(profile.getBirthday() != null){
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000Z'");
+            try {
+                Calendar dob = Calendar.getInstance();
+                dob.setTime(df.parse(profile.getBirthday()));
+                Calendar today = Calendar.getInstance();
+                int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+                if (today.get(Calendar.MONTH) < dob.get(Calendar.MONTH)) {
+                    age--;
+                } else if (today.get(Calendar.MONTH) == dob.get(Calendar.MONTH)
+                        && today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
+                    age--;
+                }
+                tAge.setText(age+"ans");
+            } catch (ParseException e) {
+                tAge.setText("");
+            }
+        }
+        else
+            tAge.setText("");
     }
 
     public void errorDialog(String message){
@@ -90,6 +122,16 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public Context getContext(){

@@ -44,9 +44,9 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             "create table PROFIL (" +
                     "idUser INTEGER PRIMARY KEY NOT NULL, " +
                     "firstName TEXT NOT NULL," +
-                    "lastName TEXT NOT NULL," +
-                    "email TEXT NOT NULL," +
-                    "birthday TEXT NOT NULL," +
+                    "lastName TEXT," +
+                    "email TEXT," +
+                    "birthday TEXT," +
                     "gender TEXT NOT NULL," +
                     "picture TEXT," +
                     "matched INTEGER NOT NULL," +
@@ -69,7 +69,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
 
     public static final String ERelation_CREATE_SKILL_TABLE =
             "create table SKILL (" +
-                    "idUser INTEGER PRIMARY KEY NOT NULL," +
+                    "idSkill INTEGER PRIMARY KEY NOT NULL," +
                     "skillName TEXT NOT NULL," +
                     "FOREIGN KEY (idUser) REFERENCES USER(idUser)" +
             ")"
@@ -229,13 +229,6 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         }
 
         result.moveToFirst();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
-        Date date = null;
-        try {
-            date = df.parse(result.getString(4));
-        } catch (ParseException e) {
-
-        }
         Profil profil = new Profil(
                 result.getInt(0),
                 result.getString(1),
@@ -265,14 +258,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public ArrayList<Profil> getMatchedProfile(){
         Cursor result = getMatchedProfile_data();
         ArrayList<Profil> profils = new ArrayList<>();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'000Z'");
-        Date date = null;
         while(result.moveToNext()){
-            try {
-                date = df.parse(result.getString(4));
-            } catch (ParseException e) {
-
-            }
             Profil profil = new Profil(
                     result.getInt(0),
                     result.getString(1),
@@ -296,11 +282,11 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     }
 
     /** SKILL**/
-    public boolean insertSkill(User user, String skillName){
+    public boolean insertSkill(Skill skill){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("idUser", user.getIdUser());
-        contentValues.put("nameSkill", skillName);
+        contentValues.put("idSkill", skill.getIdSkill());
+        contentValues.put("nameSkill", skill.getSkillName());
 
         long result = db.insertWithOnConflict("SKILL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
@@ -355,9 +341,9 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("OWNSKILL", "idSkill" + " = ?", new String[]{String.valueOf(id)});
     }
 
-    public Cursor getAllOwnSkill(){
+    public Cursor getAllOwnSkill(int idUser){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = db.rawQuery("select * from OWNSKILL", null);
+        Cursor result = db.rawQuery("select * from OWNSKILL WHERE idUser = ?", new String[] {idUser + ""});
         return result;
     }
 

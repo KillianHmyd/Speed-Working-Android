@@ -514,4 +514,8 @@ public class CardContainer extends AdapterView<ListAdapter> {
                     });
         }
     }
+
+    public View getmTopCard() {
+        return mTopCard;
+    }
 }

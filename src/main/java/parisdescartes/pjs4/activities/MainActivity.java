@@ -41,7 +41,9 @@ import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.fragments.*;
+import parisdescartes.pjs4.swipeCards.model.CardModel;
 import parisdescartes.pjs4.swipeCards.view.CardContainer;
+import parisdescartes.pjs4.swipeCards.view.SimpleCardStackAdapter;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -311,9 +313,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openProfile(View view){
-        errorDialog("Pas encore implémenté nigga");
+        Intent intent = new Intent(getContext(), ProfileActivity.class);
+        intent.putExtra("idUser", (int)view.getTag());
+        startActivity(intent);
     }
-
 
 
 }
