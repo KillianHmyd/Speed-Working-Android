@@ -30,8 +30,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/orange"
+                style="@style/MyCustomTabLayout"
                 app:tabMode="fixed"
-                app:tabGravity="fill"/>
+                app:tabGravity="fill" />
         </android.support.design.widget.AppBarLayout>
 
         <parisdescartes.pjs4.CustomViewPager

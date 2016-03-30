@@ -1,6 +1,8 @@
 package parisdescartes.pjs4;
 
 
+import android.media.session.MediaSession;
+
 import java.util.ArrayList;
 
 import parisdescartes.pjs4.classItems.Conversation;
@@ -116,5 +118,6 @@ public interface ErelationService {
     @GET("/group/{idGroup}/user/{idUser}/note")
     void getNote(@Header("Token") String Token, @Path("idGroup") int idGroup, @Path("idUser") int idUser, Callback<Note> callback);
 
-
+    @POST("/group/note/{idUser}")
+    void note(@Header("Token") String Token, @Path("idUser") int idUser, @Path("idGroup") int idGroup, @Path("note") int note, Callback<ResponseService> callback);
 }

@@ -41,11 +41,14 @@ import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Note;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.RemainingNote;
+import parisdescartes.pjs4.classItems.ResponseService;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
+
+import java.lang.Math.*;
 
 /**
  * Created by Kévin on 29/03/2016.
@@ -73,7 +76,7 @@ public class ListNoteRemaining extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(
                 R.layout.fragment_listnoteremaining, container, false);
-        listView = (ListView) view.findViewById(R.id.listMatch);
+        listView = (ListView) view.findViewById(R.id.listNoteRemaining);
         listView.setChoiceMode(listView.CHOICE_MODE_MULTIPLE);
         eRelationDbHelper = ((Application)getActivity().getApplication()).getDb();
         final NoteUsers noteUsers = (NoteUsers) getActivity();
@@ -83,11 +86,7 @@ public class ListNoteRemaining extends Fragment {
         Intent intent = noteUsers.getIntent();
         idGroup = intent.getIntExtra("idGroup", 0);
         getProfilsNonRating();
-        MatchAdapter arrayAdapter = new MatchAdapter(
-                getActivity(),
-                android.R.layout.simple_list_item_1,
-                profils );
-        listView.setAdapter(arrayAdapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 //CheckedTextView item = (CheckedTextView) view;
@@ -98,12 +97,22 @@ public class ListNoteRemaining extends Fragment {
                 final RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.dialog_ratingbar);
 
                 TextView text = (TextView) rankDialog.findViewById(R.id.rank_dialog_text1);
-
                 Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
                 updateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ratingBar.getNumStars();
+                        int note = ratingBar.getNumStars();
+                        erelationService.note(AccessToken.getCurrentAccessToken().getToken(), (int)idUser, idGroup, note, new Callback<ResponseService>() {
+                            @Override
+                            public void success(ResponseService responseService, Response response) {
+                                Toast.makeText(getActivity(), "Utilisateur bien noté", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+
+                            }
+                        });
                         rankDialog.dismiss();
                     }
                 });
@@ -143,6 +152,12 @@ public class ListNoteRemaining extends Fragment {
                             }
                         });
                     }
+                    MatchAdapter arrayAdapter = new MatchAdapter(
+                            getActivity(),
+                            android.R.layout.simple_list_item_1,
+                            profils );
+                    listView.setAdapter(arrayAdapter);
+
                 }
             }
 
