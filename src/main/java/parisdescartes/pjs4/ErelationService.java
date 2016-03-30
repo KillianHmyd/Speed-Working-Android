@@ -110,6 +110,10 @@ public interface ErelationService {
     @GET("/group/{idGroup}")
     void getGroup(@Header("Token") String token, @Path("idGroup") int idGroup, Callback<Group> callback);
 
+    //Récupérer les skills
+    @GET("/skill")
+    void getSkills(@Header("Token") String token, Callback<ArrayList<Skill>> callback);
+
     //Récupérer remaining note
     @GET("/group/{idGroup}/remainingNote")
     void getRemainingNote(@Header("Token") String token, @Path("idGroup") int idGroup, Callback<RemainingNote> callback);

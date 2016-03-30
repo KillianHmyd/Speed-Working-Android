@@ -39,8 +39,6 @@ public class SkillAdapter extends ArrayAdapter<OwnSkill> {
         if(viewHolder == null){
             viewHolder = new SkillViewHolder();
             viewHolder.skillName    = (TextView) convertView.findViewById(R.id.skillName);
-            viewHolder.description  = (TextView) convertView.findViewById(R.id.text);
-            viewHolder.skillIcon    = (ImageView) convertView.findViewById(R.id.skillIcon);
             convertView.setTag(viewHolder);
         }
 
