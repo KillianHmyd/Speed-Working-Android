@@ -7,8 +7,11 @@ import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.IdUser;
 import parisdescartes.pjs4.classItems.Profil;
+import parisdescartes.pjs4.classItems.ResponseAddUser;
+import parisdescartes.pjs4.classItems.ResponseCreateGroup;
 import parisdescartes.pjs4.classItems.ResponseMatch;
 import parisdescartes.pjs4.classItems.ResponseService;
+import parisdescartes.pjs4.classItems.ServiceAddUserToGroup;
 import parisdescartes.pjs4.classItems.Skill;
 import parisdescartes.pjs4.classItems.User;
 import retrofit.Callback;
@@ -65,7 +68,7 @@ public interface ErelationService {
 
     //Créer un groupe
     @POST("/group")
-    void createGroup(@Header("Token") String token, @Body Group group, Callback<ResponseService> callback);
+    void createGroup(@Header("Token") String token, @Body Group group, Callback<ResponseCreateGroup> callback);
 
     //Mise à jour d'un groupe
     @PATCH("/group")
@@ -78,6 +81,9 @@ public interface ErelationService {
 	//Supprimer un groupe
 	@DELETE("/group")
     void deleteGroup(@Header("Token") String token, @Body int idGroup, Callback<ResponseService> callback);
+
+    @POST("/group/user")
+    void addUserToGroup(@Header("Token") String token, @Body ServiceAddUserToGroup serviceAddUserToGroup, Callback<ResponseAddUser> callback);
 	
 	//Récupérer les matchings
 	@GET("/match/suggestion")
@@ -94,6 +100,10 @@ public interface ErelationService {
     //Récupérer conversation
     @GET("/conversations")
     void getConversation(@Header("Token") String token, Callback<ArrayList<Conversation>> callback);
+
+    //Récupérer un groupe
+    @GET("/group/{idGroup}")
+    void getGroup(@Header("Token") String token, @Path("idGroup") int idGroup, Callback<Group> callback);
 
 
 }

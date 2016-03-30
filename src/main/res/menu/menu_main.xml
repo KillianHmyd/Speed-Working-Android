@@ -1,12 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".activities.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".activities.CreateGroup">
 
     <item
-        android:id="@+id/action_account"
+        android:id="@+id/action_save"
         android:orderInCategory="300"
         android:title="User"
-        android:icon="@drawable/ic_account_circle_black_48dp"
-        android:showAsAction="ifRoom"></item>
+        android:icon="@drawable/ic_save_white_24dp"
+        app:showAsAction="ifRoom"></item>
 
 </menu>

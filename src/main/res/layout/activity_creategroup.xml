@@ -25,6 +25,7 @@
             android:minHeight="?attr/actionBarSize"
             android:background="@color/orange">
 
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -33,17 +34,7 @@
                 android:id="@+id/toolbar_title"
                 android:textSize="24sp"
                 android:textColor="@color/background" />
-            <Button
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:id="@+id/createGroupButton"
-                android:textSize="12sp"
-                android:background="@null"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:textColor="#FFF"
-                android:text="Enregistrer" />
+
         </android.support.v7.widget.Toolbar>
 
         <android.support.v4.widget.Space
@@ -117,6 +108,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
             android:layout_below="@+id/buttonSearchMatch" />
+
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

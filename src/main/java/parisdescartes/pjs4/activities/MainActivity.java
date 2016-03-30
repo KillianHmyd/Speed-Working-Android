@@ -146,8 +146,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        OneFragment oneFragment = new OneFragment();
-        //oneFragment.setSuggestionsCards();
+        final OneFragment oneFragment = new OneFragment();
+        erelationService.getSuggestion(AccessToken.getCurrentAccessToken().getToken(), 10, new Callback<ArrayList<Profil>>() {
+            @Override
+            public void success(ArrayList<Profil> profils, Response response) {
+                oneFragment.setSuggestionsCards(profils);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+
         adapter.addFragment(oneFragment, "ONE");
         adapter.addFragment(new TwoFragment(), "TWO");
         adapter.addFragment(new ThreeFragment(), "THREE");

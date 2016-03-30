@@ -1,5 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".connectActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" android:showAsAction="never" />
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:id="@+id/createGroupButton"
+        android:textSize="12sp"
+        android:background="@null"
+        android:textColor="#FFF"
+        android:text="Enregistrer"
+        android:layout_above="@+id/nameGroup"
+        android:layout_alignParentEnd="true"
+        android:onClick="createGroup"
+        />
 </menu>

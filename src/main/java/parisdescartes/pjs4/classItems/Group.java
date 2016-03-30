@@ -30,6 +30,11 @@ public class Group {
         this.idConv = idConv;
     }
 
+    public Group(String nameGroup, String presentation) {
+        this.nameGroup = nameGroup;
+        this.presentation = presentation;
+    }
+
     public Integer getIdGroup() {
         return idGroup;
     }
