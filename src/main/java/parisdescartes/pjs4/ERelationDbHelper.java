@@ -70,8 +70,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     public static final String ERelation_CREATE_SKILL_TABLE =
             "create table SKILL (" +
                     "idSkill INTEGER PRIMARY KEY NOT NULL," +
-                    "skillName TEXT NOT NULL," +
-                    "FOREIGN KEY (idUser) REFERENCES USER(idUser)" +
+                    "skillName TEXT NOT NULL"+
             ")"
             ;
 
