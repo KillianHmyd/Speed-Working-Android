@@ -49,24 +49,10 @@ public class SkillListFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_skill_list, container, false);
         mListView = (ListView)view.findViewById(R.id.listViewOfSkills);
 
+        System.out.println(listSkills.size());
 
         adapter = new SkillAdapter(getActivity(), listSkills);
         mListView.setAdapter(adapter);
-
-        //Mise en place de l'interaction d'une checkbox pour les skills
-/*          mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), listSkills.get(position).getSkillName(), Toast.LENGTH_SHORT).show();
-
-                CheckBox checkSkill = (CheckBox) view.findViewById(R.id.checkBoxOfSkill);
-                if (checkSkill.isChecked())
-                    checkSkill.setChecked(false);
-                else
-                    checkSkill.setChecked(true);
-            }
-        });
-*/
 
         return view ;
     }

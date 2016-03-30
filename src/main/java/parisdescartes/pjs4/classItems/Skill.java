@@ -6,13 +6,13 @@ package parisdescartes.pjs4.classItems;
 public class Skill {
 
     private Integer idSkill ;
-    private String skillName ;
+    private String nameSkill ;
     private Integer code ;
     private String message;
 
     public Skill(Integer idSkill, String skillName, Integer code, String message) {
         this.idSkill = idSkill;
-        this.skillName = skillName;
+        this.nameSkill = skillName;
         this.code = code;
         this.message = message;
     }
@@ -22,7 +22,7 @@ public class Skill {
     }
 
     public String getSkillName() {
-        return skillName;
+        return nameSkill;
     }
 
     public Integer getCode() {

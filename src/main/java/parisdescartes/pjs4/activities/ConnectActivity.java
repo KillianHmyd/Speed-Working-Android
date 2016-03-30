@@ -47,6 +47,7 @@ import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Participant;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseService;
+import parisdescartes.pjs4.classItems.Skill;
 import parisdescartes.pjs4.classItems.User;
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -160,8 +161,22 @@ public class ConnectActivity extends Activity {
                                                     });
                                                 }
                                             }
-                                            Intent intent = new Intent(getContext(), MainActivity.class);
-                                            startActivity(intent);
+                                            erelationConnect.getSkills(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Skill>>() {
+                                                @Override
+                                                public void success(ArrayList<Skill> skills, Response response) {
+                                                    for(Skill s : skills){
+                                                        db.insertSkill(s);
+                                                    }
+                                                    Intent intent = new Intent(getContext(), MainActivity.class);
+                                                    startActivity(intent);
+                                                }
+
+                                                @Override
+                                                public void failure(RetrofitError error) {
+
+                                                }
+                                            });
+
                                         }
 
                                         @Override

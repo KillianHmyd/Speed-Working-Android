@@ -79,6 +79,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
             "create table OWNSKILL (" +
                     "idUser INTEGER NOT NULL, " +
                     "idSkill INTEGER NOT NULL," +
+                    "PRIMARY KEY (idUser, idSkill)," +
                     "FOREIGN KEY (idUser) REFERENCES USER(idUser),"+
                     "FOREIGN KEY (idSkill) REFERENCES SKILL(idSkill)"+
             ")"
@@ -293,7 +294,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("idSkill", skill.getIdSkill());
-        contentValues.put("nameSkill", skill.getSkillName());
+        contentValues.put("skillName", skill.getSkillName());
 
         long result = db.insertWithOnConflict("SKILL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
