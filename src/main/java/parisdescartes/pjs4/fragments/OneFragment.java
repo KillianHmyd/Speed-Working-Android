@@ -158,7 +158,7 @@ public class OneFragment extends Fragment {
         return view;
     }
 
-    public CardModel.OnClickListener getOnClickListener(final Context context, final int idUser){
+    public CardModel.OnClickListener getOnClickListener(final Context context){
         return new CardModel.OnClickListener() {
             @Override
             public void OnClickListener() {
@@ -168,11 +168,11 @@ public class OneFragment extends Fragment {
         };
     }
 
-    public CardModel.OnCardDismissedListener getOnCardDismissedListener(final Context context, final int idUser){
+    public CardModel.OnCardDismissedListener getOnCardDismissedListener(final Context context){
         return new CardModel.OnCardDismissedListener() {
 
             @Override
-            public void onLike() {
+            public void onLike(final int idUser) {
                 final ErelationService erelationConnect = new RestAdapter.Builder().
                         setEndpoint(ErelationService.ENDPOINT).
                         setConverter(new GsonConverter(new GsonBuilder()
@@ -197,7 +197,7 @@ public class OneFragment extends Fragment {
                                 }
                             });
                         }
-                        Toast.makeText(context, "Utilisateur accepté", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Utilisateur "+idUser+" accepté", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -208,7 +208,7 @@ public class OneFragment extends Fragment {
             }
 
             @Override
-            public void onDislike() {
+            public void onDislike(int idUser) {
                 ErelationService erelationConnect = new RestAdapter.Builder().
                         setEndpoint(ErelationService.ENDPOINT).
                         setConverter(new GsonConverter(new GsonBuilder()
@@ -265,9 +265,10 @@ public class OneFragment extends Fragment {
                             date = "";
                         }
                     }
-                    CardModel cardModel = new CardModel(p.getFirstname(), gender+date , bitmap, p.getIdUser(), getContext());
-                    cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext(), p.getIdUser()));
-                    cardModel.setOnClickListener(getOnClickListener(getContext(), p.getIdUser()));
+                    CardModel cardModel;
+                    cardModel = new CardModel(p.getFirstname(), gender+date , bitmap, p.getIdUser(), getContext());
+                    cardModel.setOnCardDismissedListener(getOnCardDismissedListener(getContext()));
+                    cardModel.setOnClickListener(getOnClickListener(getContext()));
                     adapter.add(cardModel);
                     if (adapter.getCount() == suggestions.size())
                         mCardContainer.setAdapter(adapter);

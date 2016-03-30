@@ -56,8 +56,8 @@ public class CardModel {
 	};
 
     public interface OnCardDismissedListener {
-        void onLike();
-        void onDislike();
+        void onLike(int idUser);
+        void onDislike(int idUser);
     }
 
     public interface OnClickListener {

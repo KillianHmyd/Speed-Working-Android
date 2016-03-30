@@ -480,16 +480,18 @@ public class CardContainer extends AdapterView<ListAdapter> {
             }, duration + 200);
 
             mTopCard = getChildAt(getChildCount() - 2);
-            CardModel cardModel = (CardModel)getAdapter().getItem(getChildCount()-1);
-
+            System.out.println("adapter : "+getAdapter().getCount());
+            System.out.println("child : " + getChildCount());
+            System.out.println("next : "+mNextAdapterPosition);
+            CardModel cardModel = (CardModel)getAdapter().getItem(getAdapter().getCount()-getChildCount());
             if (mTopCard != null)
                 mTopCard.setLayerType(LAYER_TYPE_HARDWARE, null);
 
             if (cardModel.getOnCardDismissedListener() != null) {
                 if (targetX < 0) {
-                    cardModel.getOnCardDismissedListener().onDislike();
+                    cardModel.getOnCardDismissedListener().onDislike(cardModel.getIdUser());
                 } else {
-                    cardModel.getOnCardDismissedListener().onLike();
+                    cardModel.getOnCardDismissedListener().onLike(cardModel.getIdUser());
                 }
             }
 
