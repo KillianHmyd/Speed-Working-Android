@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
+import parisdescartes.pjs4.classItems.IdGroup;
 import parisdescartes.pjs4.classItems.IdUser;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.ResponseAddUser;
@@ -76,7 +77,7 @@ public interface ErelationService {
 
     //Fin du groupe/projet
     @PATCH("/group/end")
-    void endGroup(@Header("Token") String token, @Body int idGroup, Callback<ResponseService> callback);
+    void endGroup(@Header("Token") String token, @Body IdGroup idGroup, Callback<ResponseService> callback);
 
 	//Supprimer un groupe
 	@DELETE("/group")
