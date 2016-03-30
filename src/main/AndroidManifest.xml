@@ -44,6 +44,9 @@
         <activity
             android:name=".activities.ProfileActivity" >
         </activity>
+        <activity
+            android:name=".activities.GroupActivity" >
+        </activity>
     </application>
 
 </manifest>
