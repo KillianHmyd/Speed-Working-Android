@@ -17,6 +17,7 @@ import parisdescartes.pjs4.classItems.Contributor;
 import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.Message;
+import parisdescartes.pjs4.classItems.OwnSkill;
 import parisdescartes.pjs4.classItems.Participant;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.classItems.Skill;
@@ -205,11 +206,13 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         contentValues.put("matched", match);
         System.out.println("IDUSER INSERT : " + profile.getIdUser());
         long result = db.insertWithOnConflict("PROFIL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        for(OwnSkill o : profile.getSkill()){
+            insertOwnSkill(profile.getIdUser(), o.getIdSkill()
+            );
+        }
         if(result == -1){
-            System.out.println("Pas ok");
             return false;
         }else{
-            System.out.println("OK");
             return true;
         }
     }
@@ -239,6 +242,8 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                 null,
                 null
         );
+
+        profil.setSkill(getAllOwnSkill(profil.getIdUser()));
         return profil;
     }
 
@@ -269,8 +274,11 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
                     null,
                     null
             );
+            profil.setSkill(getAllOwnSkill(profil.getIdUser()));
             profils.add(profil);
         }
+
+
         return  profils;
     }
 
@@ -314,20 +322,51 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("SKILL", "idSkill" + " = ?", new String[]{String.valueOf(skill.getIdSkill())});
     }
 
-    public Cursor getAllSkill(){
+    public ArrayList<Skill> getAllSkill(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("select * from SKILL", null);
-        return result;
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        ArrayList<Skill> skills = new ArrayList<Skill>();
+        while(result.moveToNext()){
+            Skill skill = new Skill(
+                    result.getInt(0),
+                    result.getString(1),
+                    null,
+                    null
+            );
+            skills.add(skill);
+        }
+        return skills ;
+    }
+
+    public Skill getSkill(long idSkill){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from SKILL WHERE idSkill = ?", new String[] {String.valueOf(idSkill)});
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        result.moveToFirst();
+        Skill skill = new Skill (
+                result.getInt(0),
+                result.getString(1),
+                null,
+                null
+        );
+        return skill ;
     }
 
     /** OWNSKILL **/
-    public boolean insertOwnSkill(User user, Skill skill){
+    public boolean insertOwnSkill(Integer idUser, Integer idSkill){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("idUser", user.getIdUser());
-        contentValues.put("idSkill", skill.getIdSkill());
+        contentValues.put("idUser", idUser);
+        contentValues.put("idSkill", idSkill);
 
-        long result = db.insertWithOnConflict("SKILL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        long result = db.insertWithOnConflict("OWNSKILL", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         if(result == -1){
             return false;
         }else{
@@ -340,10 +379,23 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         return db.delete("OWNSKILL", "idSkill" + " = ?", new String[]{String.valueOf(id)});
     }
 
-    public Cursor getAllOwnSkill(int idUser){
+    public ArrayList<OwnSkill> getAllOwnSkill(int idUser){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = db.rawQuery("select * from OWNSKILL WHERE idUser = ?", new String[] {idUser + ""});
-        return result;
+        Cursor result = db.rawQuery("select * from OWNSKILL WHERE idUser = ?", new String[]{idUser + ""});
+        ArrayList<OwnSkill> ownSkills = new ArrayList<OwnSkill>();
+
+        if(result.getCount() == 0){
+            //show message "AUCUN USER CORREPONDANT A CET ID
+            return null;
+        }
+        while(result.moveToNext()){
+            OwnSkill skill= new OwnSkill(
+                    result.getInt(0),
+                    result.getInt(1)
+            );
+            ownSkills.add(skill);
+        }
+        return ownSkills ;
     }
 
     /** GROUPS **/

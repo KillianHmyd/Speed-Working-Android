@@ -98,11 +98,12 @@
             android:layout_height="15dp"
             android:id="@+id/spacePictureProfile"
             android:layout_below="@+id/imageViewProfile"/>
-        <ListView
+        <FrameLayout
+            android:id="@+id/listViewOfSkills"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/spacePictureProfile">
 
-        </ListView>
+        </FrameLayout>
     </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

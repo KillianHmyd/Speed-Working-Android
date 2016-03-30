@@ -2,6 +2,8 @@ package parisdescartes.pjs4.activities;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +30,8 @@ import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Profil;
+import parisdescartes.pjs4.fragments.ListMatch;
+import parisdescartes.pjs4.fragments.SkillListFragment;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -40,12 +44,28 @@ public class ProfileActivity extends AppCompatActivity {
     private ERelationDbHelper eRelationDbHelper ;
     private ErelationService erelationService;
     private Profil profile ;
+
+    private Fragment fragment;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         eRelationDbHelper = new ERelationDbHelper(this);
         int idUser = getIntent().getExtras().getInt("idUser");
         profile = eRelationDbHelper.getProfile(idUser);
+        Bundle bundle = new Bundle();
+        bundle.putInt("idUser", profile.getIdUser());
+
+        fragment = new SkillListFragment();
+        fragment.setArguments(bundle);
+        fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.listViewOfSkills, fragment);
+        fragmentTransaction.commit();
+
+
         setContentView(R.layout.activity_profile);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
@@ -90,15 +110,15 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void init(){
         //Mise en place des informations sur le Layout
-        TextView tVFirstname=   (TextView) findViewById(R.id.textViewFirstname);
-        TextView tVLastname=   (TextView) findViewById(R.id.textViewLastname);
-        TextView tMail  =   (TextView) findViewById(R.id.textViewMail);
-        TextView tGender = (TextView) findViewById(R.id.textViewGender);
-        TextView tAge = (TextView) findViewById(R.id.textViewAge);
+        TextView tVFirstname    =   (TextView) findViewById(R.id.textViewFirstname);
+        TextView tVLastname     =   (TextView) findViewById(R.id.textViewLastname);
+        TextView tMail          =   (TextView) findViewById(R.id.textViewMail);
+        TextView tGender        =   (TextView) findViewById(R.id.textViewGender);
+        TextView tAge           =   (TextView) findViewById(R.id.textViewAge);
         Picasso.with(getContext()).load(profile.getPicture()).into(((ImageView) findViewById(R.id.imageViewProfile)));
 
         tVFirstname.setText(profile.getFirstname());
-        tVLastname.setText(profile.getLastname() != null ? " "+profile.getLastname() : "");
+        tVLastname.setText(profile.getLastname() != null ? " " + profile.getLastname() : "");
         tMail.setText(profile.getEmail() != null ? profile.getEmail() : "");
         tGender.setText(profile.getGender().equals("male") ? "Homme" : "Femme");
         if(profile.getBirthday() != null){
@@ -121,6 +141,14 @@ public class ProfileActivity extends AppCompatActivity {
         }
         else
             tAge.setText("");
+    }
+
+    public void initFragment() {
+        fragment = new SkillListFragment();
+        fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.listViewOfSkills, fragment);
+        fragmentTransaction.commit();
     }
 
     public void errorDialog(String message){

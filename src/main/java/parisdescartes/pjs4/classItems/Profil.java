@@ -1,6 +1,7 @@
 
 package parisdescartes.pjs4.classItems;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -15,7 +16,7 @@ public class Profil {
     private String birthday;
     private String gender;
     private String picture;
-
+    private ArrayList<OwnSkill> skill;
     private Integer code ;
     private String message;
 
@@ -35,6 +36,7 @@ public class Profil {
     public Integer getIdUser() {
         return idUser;
     }
+
     public String getFirstname() {
         return firstname;
     }
@@ -57,6 +59,13 @@ public class Profil {
 
     public String getPicture() {
         return picture;
+    }
+
+    public ArrayList<OwnSkill> getSkill() {
+        return skill;
+    }
+    public void setSkill(ArrayList<OwnSkill> skill) {
+        this.skill = skill;
     }
 
     public Integer getCode() {

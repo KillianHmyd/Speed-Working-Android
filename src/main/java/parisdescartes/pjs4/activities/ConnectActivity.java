@@ -122,6 +122,7 @@ public class ConnectActivity extends Activity {
                             progress.dismiss();
                         }
                         else {
+                            System.out.println(profil.getSkill().size());
                             db.insertProfile(profil, false);
                             sharedpreferencesUser.edit().putLong("idUser", user.getIdUser()).commit();
                             erelationConnect.getGroups(AccessToken.getCurrentAccessToken().getToken(), new Callback<ArrayList<Group>>() {
