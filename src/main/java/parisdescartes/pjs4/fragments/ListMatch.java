@@ -1,5 +1,6 @@
 package parisdescartes.pjs4.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -21,6 +22,7 @@ import parisdescartes.pjs4.Application;
 import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
+import parisdescartes.pjs4.activities.CreateGroup;
 import parisdescartes.pjs4.classItems.Profil;
 
 /**
@@ -49,6 +51,7 @@ public class ListMatch extends Fragment {
                 R.layout.fragment_list_match, container, false);
         listView = (ListView) view.findViewById(R.id.listMatch);
         listView.setChoiceMode(listView.CHOICE_MODE_MULTIPLE);
+        final CreateGroup createGroup = (CreateGroup) getActivity();
 
         eRelationDbHelper = ((Application)getActivity().getApplication()).getDb();
 
@@ -64,6 +67,7 @@ public class ListMatch extends Fragment {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 //CheckedTextView item = (CheckedTextView) view;
                 Toast.makeText(getActivity(), profils.get(i).getFirstname() + " checked", Toast.LENGTH_SHORT).show();
+                createGroup.addToArray(profils.get(i).getIdUser());
             }
         });
         /*listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
