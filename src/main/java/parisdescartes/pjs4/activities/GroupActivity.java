@@ -42,7 +42,6 @@ public class GroupActivity extends AppCompatActivity {
     private int idGroup;
     private long idLeader;
     private SharedPreferences sharedPreferencesUser;
-    //public final static String EXTRA_MESSAGE = "parisdescartes.pjs4.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,22 +132,10 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void success(ResponseService responseService, Response response) {
                 Toast.makeText(GroupActivity.this, "Groupe fini c'est bon negro", Toast.LENGTH_SHORT);
-                final Dialog rankDialog = new Dialog(GroupActivity.this, R.style.FullHeightDialog);
-                rankDialog.setContentView(R.layout.rank_dialog);
-                rankDialog.setCancelable(true);
-                RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.dialog_ratingbar);
-
-                TextView text = (TextView) rankDialog.findViewById(R.id.rank_dialog_text1);
-
-                Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
-                updateButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        rankDialog.dismiss();
-                    }
-                });
-                //now that the dialog is set up, it's time to show it
-                rankDialog.show();
+                Intent intent = new Intent(GroupActivity.this, NoteUsers.class);
+                int idUser = groupe.getIdGroup();
+                intent.putExtra("idGroup", idUser);
+                startActivity(intent);
             }
 
             @Override

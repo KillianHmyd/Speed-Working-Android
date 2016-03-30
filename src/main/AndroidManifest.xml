@@ -47,6 +47,9 @@
         <activity
             android:name=".activities.GroupActivity" >
         </activity>
+        <activity
+            android:name=".activities.NoteUsers">
+        </activity>
     </application>
 
 </manifest>

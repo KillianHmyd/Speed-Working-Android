@@ -1,13 +1,17 @@
 package parisdescartes.pjs4;
 
 
+import android.media.session.MediaSession;
+
 import java.util.ArrayList;
 
 import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.IdGroup;
 import parisdescartes.pjs4.classItems.IdUser;
+import parisdescartes.pjs4.classItems.Note;
 import parisdescartes.pjs4.classItems.Profil;
+import parisdescartes.pjs4.classItems.RemainingNote;
 import parisdescartes.pjs4.classItems.ResponseAddUser;
 import parisdescartes.pjs4.classItems.ResponseCreateGroup;
 import parisdescartes.pjs4.classItems.ResponseMatch;
@@ -110,5 +114,14 @@ public interface ErelationService {
     @GET("/skill")
     void getSkills(@Header("Token") String token, Callback<ArrayList<Skill>> callback);
 
+    //Récupérer remaining note
+    @GET("/group/{idGroup}/remainingNote")
+    void getRemainingNote(@Header("Token") String token, @Path("idGroup") int idGroup, Callback<RemainingNote> callback);
 
+    //
+    @GET("/group/{idGroup}/user/{idUser}/note")
+    void getNote(@Header("Token") String Token, @Path("idGroup") int idGroup, @Path("idUser") int idUser, Callback<Note> callback);
+
+    @POST("/group/note/{idUser}")
+    void note(@Header("Token") String Token, @Path("idUser") int idUser, @Path("idGroup") int idGroup, @Path("note") int note, Callback<ResponseService> callback);
 }

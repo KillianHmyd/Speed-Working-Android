@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +21,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.support.v8.renderscript.Allocation;
+import android.support.v8.renderscript.Element;
+import android.support.v8.renderscript.RenderScript;
+import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -29,7 +37,9 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferencesUser;
     private ERelationDbHelper db;
     ErelationService erelationService;
+    private int[] tabIcons = {
+            R.drawable.ic_arrow_back_white_24dp,
+            R.drawable.ic_group_white_24dp,
+            R.drawable.ic_message_white_24dp
+    };
+    private Target loadtarget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +108,9 @@ public class MainActivity extends AppCompatActivity {
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         ((TextView)nvDrawer.getHeaderView(0).findViewById(R.id.nav_header_text)).setText(profil.getFirstname() + " " + profil.getLastname());
 
-        Picasso.with(this).load(profil.getPicture()).into(((ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
+
+
+        Picasso.with(this).load(profil.getPicture()).into(((CircularImageView) nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
         setupDrawerContent(nvDrawer);
         nvDrawer.getHeaderView(0).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Picasso.with(this).load(profil.getPicture()).into(((ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
+        makeNavHeaderBackground();
         setupDrawerContent(nvDrawer);
 
 
@@ -115,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        setupTabIcons();
         viewPager.addOnPageChangeListener(new CustomViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -142,6 +162,34 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private void setupTabIcons() {
+        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+    }
+
+    private void makeNavHeaderBackground() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.goldengate);
+        Bitmap blurredBitmap = addBlurEffect(bitmap);
+        Bitmap blurredBitmap2 = addBlurEffect(blurredBitmap);
+        nvDrawer.getHeaderView(0).setBackground(new BitmapDrawable(getResources(), blurredBitmap2));
+    }
+
+    private Bitmap addBlurEffect(Bitmap bitmap) {
+        final float BLUR_RADIUS = 25f;
+        Bitmap outputBitmap = Bitmap.createBitmap(bitmap);
+        final RenderScript renderScript = RenderScript.create(this);
+        Allocation tmpIn = Allocation.createFromBitmap(renderScript, bitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(renderScript, outputBitmap);
+
+        //Intrinsic Gausian blur filter
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript));
+        theIntrinsic.setRadius(BLUR_RADIUS);
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+        return outputBitmap;
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -190,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
+            return null;
         }
     }
 

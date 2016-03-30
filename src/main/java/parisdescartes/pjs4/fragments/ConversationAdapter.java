@@ -65,7 +65,7 @@ public class ConversationAdapter extends ArrayAdapter<Conversation> {
                 Picasso.with(getContext()).load(db.getProfile(participants.get(1).getIdUser()).getPicture()).into(viewHolder.avatar);
             }
             else {
-                System.out.println("USER : " + db.getProfile(participants.get(0).getIdUser()).getFirstname() );
+                //System.out.println("USER : " + db.getProfile(participants.get(0).getIdUser()).getFirstname() );
                 Picasso.with(getContext()).load(db.getProfile(participants.get(0).getIdUser()).getPicture()).into(viewHolder.avatar);
             }
         }

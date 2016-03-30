@@ -66,7 +66,7 @@ public class ListMatch extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 //CheckedTextView item = (CheckedTextView) view;
-                Toast.makeText(getActivity(), profils.get(i).getFirstname() + profils.get(i).getIdUser() + " checked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), profils.get(i).getFirstname() + profils.get(i).getIdUser() + " checked", Toast.LENGTH_SHORT).show();
                 createGroup.addToArray(profils.get(i).getIdUser());
             }
         });
