@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,6 +47,16 @@ public class ProfileActivity extends AppCompatActivity {
         int idUser = getIntent().getExtras().getInt("idUser");
         profile = eRelationDbHelper.getProfile(idUser);
         setContentView(R.layout.activity_profile);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -102,7 +114,7 @@ public class ProfileActivity extends AppCompatActivity {
                         && today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
                     age--;
                 }
-                tAge.setText(age+"ans");
+                tAge.setText(age+" ans");
             } catch (ParseException e) {
                 tAge.setText("");
             }
