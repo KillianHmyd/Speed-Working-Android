@@ -13,6 +13,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
+import java.util.ArrayList;
+
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.fragments.ListMatch;
 
@@ -24,6 +26,7 @@ public class CreateGroup extends AppCompatActivity {
     private Fragment fragment;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
+    private ArrayList<Integer> IdUsersGroup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +35,6 @@ public class CreateGroup extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarGroup);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
     }
 
     public void searchBetter(View view) {
@@ -49,5 +46,11 @@ public class CreateGroup extends AppCompatActivity {
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_place, fragment);
         fragmentTransaction.commit();
+    }
+
+    public void addToArray(int idUser) {
+        Integer integer = new Integer(idUser);
+        IdUsersGroup.add(integer);
+        Toast.makeText(CreateGroup.this, integer, Toast.LENGTH_SHORT);
     }
 }
