@@ -7,7 +7,9 @@ import parisdescartes.pjs4.classItems.Conversation;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.IdGroup;
 import parisdescartes.pjs4.classItems.IdUser;
+import parisdescartes.pjs4.classItems.Note;
 import parisdescartes.pjs4.classItems.Profil;
+import parisdescartes.pjs4.classItems.RemainingNote;
 import parisdescartes.pjs4.classItems.ResponseAddUser;
 import parisdescartes.pjs4.classItems.ResponseCreateGroup;
 import parisdescartes.pjs4.classItems.ResponseMatch;
@@ -105,6 +107,14 @@ public interface ErelationService {
     //Récupérer un groupe
     @GET("/group/{idGroup}")
     void getGroup(@Header("Token") String token, @Path("idGroup") int idGroup, Callback<Group> callback);
+
+    //Récupérer remaining note
+    @GET("/group/{idGroup}/remainingNote")
+    void getRemainingNote(@Header("Token") String token, @Path("idGroup") int idGroup, Callback<RemainingNote> callback);
+
+    //
+    @GET("/group/{idGroup}/user/{idUser}/note")
+    void getNote(@Header("Token") String Token, @Path("idGroup") int idGroup, @Path("idUser") int idUser, Callback<Note> callback);
 
 
 }
