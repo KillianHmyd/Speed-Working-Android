@@ -70,34 +70,6 @@ public class ListMatch extends Fragment {
                 createGroup.addToArray(profils.get(i).getIdUser());
             }
         });
-        /*listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
-
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-
-            }
-        });*/
 
 
         return view;

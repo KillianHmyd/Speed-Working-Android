@@ -1,6 +1,7 @@
 package parisdescartes.pjs4.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -131,6 +133,22 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void success(ResponseService responseService, Response response) {
                 Toast.makeText(GroupActivity.this, "Groupe fini c'est bon negro", Toast.LENGTH_SHORT);
+                final Dialog rankDialog = new Dialog(GroupActivity.this, R.style.FullHeightDialog);
+                rankDialog.setContentView(R.layout.rank_dialog);
+                rankDialog.setCancelable(true);
+                RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.dialog_ratingbar);
+
+                TextView text = (TextView) rankDialog.findViewById(R.id.rank_dialog_text1);
+
+                Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+                updateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        rankDialog.dismiss();
+                    }
+                });
+                //now that the dialog is set up, it's time to show it
+                rankDialog.show();
             }
 
             @Override
