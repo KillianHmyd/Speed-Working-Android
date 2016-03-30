@@ -17,7 +17,6 @@
 
         <android.support.v7.widget.Toolbar
             xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/toolbarGroup"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
@@ -90,31 +89,34 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Ajoutez un \nutilisateur"
-            android:id="@+id/buttonSearchMatch"
+            android:id="@+id/buttonAddUserToGroup"
             android:layout_alignBottom="@+id/buttonSearchBetter"
             android:background="@color/orange"
             android:textColor="@android:color/white"
-            android:onClick="searchMatch"
-            android:layout_below="@+id/spaceAfterText" />
+            android:onClick="addUser"
+            android:layout_below="@+id/spaceAfterText"
+            android:visibility="invisible"/>
 
 
         <Button
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:text="Finr le\ngroupe"
-            android:id="@+id/buttonSearchBetter"
+            android:text="Finir le\ngroupe"
+            android:id="@+id/buttonFinishGroup"
             android:background="@color/orange"
             android:textColor="@android:color/white"
             android:layout_below="@+id/spaceAfterText"
             android:layout_alignParentEnd="true"
-            android:onClick="searchBetter"/>
+            android:onClick="finishGroup"
+            android:visibility="invisible"/>
+
         <FrameLayout
             android:id="@+id/fragment_place"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/buttonSearchBetter" />
+            android:layout_below="@+id/buttonFinishGroup" />
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>
