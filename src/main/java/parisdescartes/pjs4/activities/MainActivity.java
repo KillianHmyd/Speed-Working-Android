@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -51,9 +50,7 @@ import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Profil;
 import parisdescartes.pjs4.fragments.*;
-import parisdescartes.pjs4.swipeCards.model.CardModel;
 import parisdescartes.pjs4.swipeCards.view.CardContainer;
-import parisdescartes.pjs4.swipeCards.view.SimpleCardStackAdapter;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -75,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private ERelationDbHelper db;
     ErelationService erelationService;
     private int[] tabIcons = {
-            R.drawable.ic_arrow_back_white_24dp,
+            R.drawable.logoicon,
             R.drawable.ic_group_white_24dp,
             R.drawable.ic_message_white_24dp
     };
@@ -100,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Speed Working");
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
@@ -171,9 +169,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void makeNavHeaderBackground() {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.goldengate);
-        Bitmap blurredBitmap = addBlurEffect(bitmap);
-        Bitmap blurredBitmap2 = addBlurEffect(blurredBitmap);
-        nvDrawer.getHeaderView(0).setBackground(new BitmapDrawable(getResources(), blurredBitmap2));
+        //Bitmap blurredBitmap = addBlurEffect(bitmap);
+        nvDrawer.getHeaderView(0).setBackground(new BitmapDrawable(getResources(), bitmap));
     }
 
     private Bitmap addBlurEffect(Bitmap bitmap) {

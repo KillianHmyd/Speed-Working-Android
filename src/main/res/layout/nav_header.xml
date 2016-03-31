@@ -29,7 +29,7 @@
         app:civ_shadow_color="#000000"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp"/>
+        android:layout_marginBottom="25dp"/>
 
     <TextView
         android:id="@+id/nav_header_text"
