@@ -123,5 +123,5 @@ public interface ErelationService {
     void getNote(@Header("Token") String Token, @Path("idGroup") int idGroup, @Path("idUser") int idUser, Callback<Note> callback);
 
     @POST("/group/note/{idUser}")
-    void note(@Header("Token") String Token, @Path("idUser") int idUser, @Path("idGroup") int idGroup, @Path("note") int note, Callback<ResponseService> callback);
+    void note(@Header("Token") String Token, @Path("idUser") int idUser, @Body Note note, Callback<ResponseService> callback);
 }

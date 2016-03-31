@@ -50,6 +50,9 @@
         <activity
             android:name=".activities.NoteUsers">
         </activity>
+        <activity
+            android:name=".activities.SettingActivity">
+        </activity>
     </application>
 
 </manifest>

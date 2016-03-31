@@ -55,15 +55,6 @@ public class ProfileActivity extends AppCompatActivity {
         eRelationDbHelper = new ERelationDbHelper(this);
         int idUser = getIntent().getExtras().getInt("idUser");
         profile = eRelationDbHelper.getProfile(idUser);
-        Bundle bundle = new Bundle();
-        bundle.putInt("idUser", profile.getIdUser());
-
-        fragment = new SkillListFragment();
-        fragment.setArguments(bundle);
-        fragmentManager = getFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.listViewOfSkills, fragment);
-        fragmentTransaction.commit();
 
 
         setContentView(R.layout.activity_profile);
@@ -104,6 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
         else{
             init();
+
         }
 
     }
@@ -141,6 +133,15 @@ public class ProfileActivity extends AppCompatActivity {
         }
         else
             tAge.setText("");
+        Bundle bundle = new Bundle();
+        bundle.putInt("idUser", profile.getIdUser());
+        fragment = new SkillListFragment();
+        fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.listViewOfSkills, fragment);
+        fragmentTransaction.commit();
+        fragment.setArguments(bundle);
+
     }
 
     public void initFragment() {

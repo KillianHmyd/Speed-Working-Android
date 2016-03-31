@@ -24,6 +24,7 @@ import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 import parisdescartes.pjs4.classItems.Group;
 import parisdescartes.pjs4.classItems.IdGroup;
+import parisdescartes.pjs4.classItems.RemainingNote;
 import parisdescartes.pjs4.classItems.ResponseService;
 import parisdescartes.pjs4.fragments.TwoFragment;
 import retrofit.Callback;
@@ -77,6 +78,24 @@ public class GroupActivity extends AppCompatActivity {
             public void success(Group group, Response response) {
                 groupe = group;
                 init();
+                if(group.isFinish()) {
+                    erelationService.getRemainingNote(AccessToken.getCurrentAccessToken().getToken(), idGroup, new Callback<RemainingNote>() {
+                        @Override
+                        public void success(RemainingNote remainingNote, Response response) {
+                            if (remainingNote.isRemaining()) {
+                                Intent intent = new Intent(GroupActivity.this, NoteUsers.class);
+                                int idUser = groupe.getIdGroup();
+                                intent.putExtra("idGroup", idUser);
+                                startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+
+                        }
+                    });
+                }
                 checkLeader();
             }
 
@@ -116,10 +135,12 @@ public class GroupActivity extends AppCompatActivity {
     private void checkLeader() {
         Integer idLead = groupe.getIdLeader();
         if (idLead == idLeader) {
-            Button addUser = (Button) findViewById(R.id.buttonAddUserToGroup);
-            Button finishGroup = (Button) findViewById(R.id.buttonFinishGroup);
-            addUser.setVisibility(View.VISIBLE);
-            finishGroup.setVisibility(View.VISIBLE);
+            if(!groupe.isFinish()) {
+                Button addUser = (Button) findViewById(R.id.buttonAddUserToGroup);
+                addUser.setVisibility(View.VISIBLE);
+                Button finishGroup = (Button) findViewById(R.id.buttonFinishGroup);
+                finishGroup.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -131,7 +152,6 @@ public class GroupActivity extends AppCompatActivity {
         erelationService.endGroup(AccessToken.getCurrentAccessToken().getToken(), new IdGroup(groupe.getIdGroup()), new Callback<ResponseService>() {
             @Override
             public void success(ResponseService responseService, Response response) {
-                Toast.makeText(GroupActivity.this, "Groupe fini c'est bon negro", Toast.LENGTH_SHORT);
                 Intent intent = new Intent(GroupActivity.this, NoteUsers.class);
                 int idUser = groupe.getIdGroup();
                 intent.putExtra("idGroup", idUser);

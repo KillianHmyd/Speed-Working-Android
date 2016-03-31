@@ -8,6 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -33,8 +37,6 @@ import parisdescartes.pjs4.ERelationDbHelper;
 import parisdescartes.pjs4.ErelationService;
 import parisdescartes.pjs4.R;
 
-import parisdescartes.pjs4.activities.CreateGroup;
-import parisdescartes.pjs4.activities.MainActivity;
 import parisdescartes.pjs4.activities.NoteUsers;
 import parisdescartes.pjs4.classItems.Contributor;
 import parisdescartes.pjs4.classItems.Group;
@@ -48,8 +50,6 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 
-import java.lang.Math.*;
-
 /**
  * Created by Kévin on 29/03/2016.
  */
@@ -57,6 +57,8 @@ public class ListNoteRemaining extends Fragment {
 
     ERelationDbHelper eRelationDbHelper;
     ArrayList<Profil> profils;
+    ArrayList<Integer> count;
+    private Group group;
     private int idGroup;
     private long idUser;
     private SharedPreferences sharedPreferencesUser;
@@ -82,44 +84,12 @@ public class ListNoteRemaining extends Fragment {
         final NoteUsers noteUsers = (NoteUsers) getActivity();
         sharedPreferencesUser = noteUsers.getSharedPreferences("USER", Context.MODE_PRIVATE);
         idUser = sharedPreferencesUser.getLong("idUser", 0);
-
+        profils = new ArrayList<>();
         Intent intent = noteUsers.getIntent();
         idGroup = intent.getIntExtra("idGroup", 0);
+        group = eRelationDbHelper.getGroup(idGroup);
+        ((TextView) getActivity().findViewById(R.id.nameGroup)).setText("Groupe "+group.getNameGroup());
         getProfilsNonRating();
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
-                //CheckedTextView item = (CheckedTextView) view;
-                //Toast.makeText(getActivity(), profils.get(i).getFirstname() + profils.get(i).getIdUser() + " checked", Toast.LENGTH_SHORT).show();
-                final Dialog rankDialog = new Dialog(getActivity(), R.style.FullHeightDialog);
-                rankDialog.setContentView(R.layout.rank_dialog);
-                rankDialog.setCancelable(true);
-                final RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.dialog_ratingbar);
-
-                TextView text = (TextView) rankDialog.findViewById(R.id.rank_dialog_text1);
-                Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
-                updateButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int note = ratingBar.getNumStars();
-                        erelationService.note(AccessToken.getCurrentAccessToken().getToken(), (int)idUser, idGroup, note, new Callback<ResponseService>() {
-                            @Override
-                            public void success(ResponseService responseService, Response response) {
-                                Toast.makeText(getActivity(), "Utilisateur bien noté", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-
-                            }
-                        });
-                        rankDialog.dismiss();
-                    }
-                });
-                //now that the dialog is set up, it's time to show it
-                rankDialog.show();
-            }
-        });
 
 
         return view;
@@ -134,16 +104,86 @@ public class ListNoteRemaining extends Fragment {
                 setConverter(new GsonConverter(gson)).
                 build().
                 create(ErelationService.class);
+        count = new ArrayList<>();
         erelationService.getRemainingNote(AccessToken.getCurrentAccessToken().getToken(), idGroup, new Callback<RemainingNote>() {
             @Override
             public void success(RemainingNote remainingNote, Response response) {
                 if(remainingNote.isRemaining()) {
-                    Group group = eRelationDbHelper.getGroup(idGroup);
                     for (Contributor c : group.getContributors()) {
                         erelationService.getNote(AccessToken.getCurrentAccessToken().getToken(), idGroup, c.getIdUser(), new Callback<Note>() {
                             @Override
                             public void success(Note note, Response response) {
-                                profils.add(eRelationDbHelper.getProfile(note.getIdUserTo()));
+                                if(note.getCode() == 404 && note.getIdUserTo() != idUser){
+                                    Profil p = eRelationDbHelper.getProfile(note.getIdUserTo());
+                                    if(p == null){
+                                        erelationService.getProfil(AccessToken.getCurrentAccessToken().getToken(), note.getIdUserTo(), new Callback<Profil>() {
+                                            @Override
+                                            public void success(Profil profil, Response response) {
+                                                profils.add(profil);
+                                            }
+
+                                            @Override
+                                            public void failure(RetrofitError error) {
+
+                                            }
+                                        });
+                                    }
+                                    else
+                                        profils.add(p);
+
+                                }
+
+                                count.add(0);
+                                if(count.size() >= group.getContributors().size()){
+                                    final MatchAdapter arrayAdapter = new MatchAdapter(
+                                            getActivity(),
+                                            android.R.layout.simple_list_item_1,
+                                            profils );
+                                    listView.setAdapter(arrayAdapter);
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        public void onItemClick(AdapterView<?> av, View view, final int i, long l) {
+                                            //CheckedTextView item = (CheckedTextView) view;
+                                            //Toast.makeText(getActivity(), profils.get(i).getFirstname() + profils.get(i).getIdUser() + " checked", Toast.LENGTH_SHORT).show();
+                                            final Dialog rankDialog = new Dialog(getActivity(), R.style.FullHeightDialog);
+                                            rankDialog.setContentView(R.layout.rank_dialog);
+                                            rankDialog.setCancelable(true);
+                                            final RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.dialog_ratingbar);
+                                            LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+                                            stars.getDrawable(2).setColorFilter(getResources().getColor(R.color.orange), PorterDuff.Mode.SRC_ATOP);
+                                            stars.getDrawable(1).setColorFilter(getResources().getColor(R.color.orange), PorterDuff.Mode.SRC_ATOP);
+                                            stars.getDrawable(0).setColorFilter(getResources().getColor(R.color.orangeWhite), PorterDuff.Mode.SRC_ATOP);
+                                            TextView text = (TextView) rankDialog.findViewById(R.id.rank_dialog_text1);
+                                            text.setText(profils.get(i).getFirstname());
+                                            Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+                                            updateButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    float note = (ratingBar.getRating()*2)-5;
+                                                    erelationService.note(AccessToken.getCurrentAccessToken().getToken(), profils.get(i).getIdUser(), new Note(null, null, group.getIdGroup(), note, null, null),
+                                                            new Callback<ResponseService>() {
+                                                        @Override
+                                                        public void success(ResponseService responseService, Response response) {
+                                                            Toast.makeText(getActivity(), "Utilisateur bien noté", Toast.LENGTH_SHORT).show();
+                                                            arrayAdapter.remove(profils.get(i));
+                                                            arrayAdapter.notifyDataSetChanged();
+                                                        }
+
+                                                        @Override
+                                                        public void failure(RetrofitError error) {
+
+                                                        }
+                                                    });
+                                                    rankDialog.dismiss();
+                                                }
+                                            });
+                                            //now that the dialog is set up, it's time to show it
+                                            rankDialog.show();
+                                        }
+                                    });
+                                }
+
+
+
                             }
 
                             @Override
@@ -152,11 +192,6 @@ public class ListNoteRemaining extends Fragment {
                             }
                         });
                     }
-                    MatchAdapter arrayAdapter = new MatchAdapter(
-                            getActivity(),
-                            android.R.layout.simple_list_item_1,
-                            profils );
-                    listView.setAdapter(arrayAdapter);
 
                 }
             }

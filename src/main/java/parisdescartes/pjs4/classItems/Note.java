@@ -7,11 +7,11 @@ public class Note {
     private Integer idUserFrom;
     private Integer idUserTo;
     private Integer idGroup;
-    private Integer note;
+    private Float note;
     private Integer code;
     private String message;
 
-    public Note(Integer idUserFrom, Integer idUserTo, Integer idGroup, Integer note, Integer code, String message) {
+    public Note(Integer idUserFrom, Integer idUserTo, Integer idGroup, Float note, Integer code, String message) {
         this.idUserFrom = idUserFrom;
         this.idUserTo = idUserTo;
         this.idGroup = idGroup;
@@ -32,7 +32,7 @@ public class Note {
         return idGroup;
     }
 
-    public Integer getNote() {
+    public Float getNote() {
         return note;
     }
 

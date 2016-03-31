@@ -169,24 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void makeNavHeaderBackground() {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.goldengate);
-        //Bitmap blurredBitmap = addBlurEffect(bitmap);
         nvDrawer.getHeaderView(0).setBackground(new BitmapDrawable(getResources(), bitmap));
-    }
-
-    private Bitmap addBlurEffect(Bitmap bitmap) {
-        final float BLUR_RADIUS = 25f;
-        Bitmap outputBitmap = Bitmap.createBitmap(bitmap);
-        final RenderScript renderScript = RenderScript.create(this);
-        Allocation tmpIn = Allocation.createFromBitmap(renderScript, bitmap);
-        Allocation tmpOut = Allocation.createFromBitmap(renderScript, outputBitmap);
-
-        //Intrinsic Gausian blur filter
-        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript));
-        theIntrinsic.setRadius(BLUR_RADIUS);
-        theIntrinsic.setInput(tmpIn);
-        theIntrinsic.forEach(tmpOut);
-        tmpOut.copyTo(outputBitmap);
-        return outputBitmap;
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -269,18 +252,16 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         switch(menuItem.getItemId()) {
             case R.id.nav_first:
-                //TODO Faire la settings activity
-                /*
-                intent = new Intent(MainActivity.this, Settings.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                break; */
-            case R.id.nav_second:
-                //TODO Faire la about us activity
-                intent = new Intent(MainActivity.this, AboutUs.class);
+                intent = new Intent(MainActivity.this, SettingActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
+            case R.id.nav_second:
+                //TODO Faire la about us activity
+                /*intent = new Intent(MainActivity.this, AboutUsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;*/
         }
 
         // Highlight the selected item, update the title, and close the drawer

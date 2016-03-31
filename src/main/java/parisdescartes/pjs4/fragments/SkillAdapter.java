@@ -41,12 +41,10 @@ public class SkillAdapter extends ArrayAdapter<OwnSkill> {
             viewHolder.skillName    = (TextView) convertView.findViewById(R.id.skillName);
             convertView.setTag(viewHolder);
         }
-
-        //getItem(position) va récupérer l'item [position] de la List<Tweet> tweets
+        System.out.println("position: "+position);
         OwnSkill skill = getItem(position);
+        System.out.println("idSkill : "+skill.getIdSkill());
         viewHolder.skillName.setText(eRelationDbHelper.getSkill(skill.getIdSkill()).getSkillName());
-        //viewHolder.description.setText(skill.getDescription());
-        //viewHolder.avatar.setImageDrawable(new ColorDrawable(group.getColor()));
 
         return convertView;
     }

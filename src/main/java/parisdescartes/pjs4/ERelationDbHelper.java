@@ -165,6 +165,20 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
     }
 
 
+    public void reset() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS USER");
+        db.execSQL("DROP TABLE IF EXISTS PROFIL");
+        db.execSQL("DROP TABLE IF EXISTS GROUPS");
+        db.execSQL("DROP TABLE IF EXISTS SKILL");
+        db.execSQL("DROP TABLE IF EXISTS OWNSKILL");
+        db.execSQL("DROP TABLE IF EXISTS ACCESSGRP");
+        db.execSQL("DROP TABLE IF EXISTS MESSAGES");
+        db.execSQL("DROP TABLE IF EXISTS CONVERSATIONS");
+        db.execSQL("DROP TABLE IF EXISTS ACCESSCONV");
+        onCreate(db);
+    }
+
     /** USER **/
     public boolean insertUser(User user){
         SQLiteDatabase db = getWritableDatabase();
@@ -391,8 +405,8 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         }
         while(result.moveToNext()){
             OwnSkill skill= new OwnSkill(
-                    result.getInt(0),
-                    result.getInt(1)
+                    result.getInt(1),
+                    result.getInt(0)
             );
             ownSkills.add(skill);
         }
@@ -695,7 +709,7 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         );
         return conv;
     }
-    
+
     public Message getLastUpdate() throws ParseException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("SELECT * FROM MESSAGES m, CONVERSATIONS c" +
@@ -786,4 +800,6 @@ public class ERelationDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase() ;
         return db.delete("ACCESSCONV", null,null);
     }
+
+
 }
