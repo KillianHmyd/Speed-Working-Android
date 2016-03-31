@@ -3,9 +3,26 @@
     android:id="@+id/global_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="300dp"
-    android:layout_height="300dp">
+    android:layout_width="400dp"
+    android:layout_height="450dp">
 
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignWithParentIfMissing="true"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/picture1"
+        android:layout_above="@+id/description" />
+
+
+    <View
+        android:id="@+id/divider_image"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@color/card_outline"
+        android:layout_below="@+id/image" />
     <TextView
         android:id="@+id/title"
         style="@android:style/TextAppearance.Large.Inverse"
@@ -17,39 +34,27 @@
         android:layout_height="wrap_content"
         android:background="@color/card_bg"
         tools:text="Title"
-        android:padding="10dp"/>
-
-    <View
-        android:id="@+id/divider_title"
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/title"
-        android:background="@color/card_outline"
-        />
-
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/divider_title"
-        android:layout_alignWithParentIfMissing="true"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/picture1"/>
+        android:padding="10dp"
+        android:al="@+id/divider_image"
+        android:layout_above="@+id/divider_image"
+        android:layout_alignParentStart="true" />
 
     <View
         android:id="@+id/divider_bottom"
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@color/card_outline"
-        android:layout_alignTop="@+id/description" />
+        android:layout_below="@+id/title"/>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="10dp"
-        android:layout_alignBottom="@+id/description"
-        android:layout_below="@+id/divider_bottom"
         android:background="@color/card_bg"
-        android:id="@+id/view" />
+        android:id="@+id/view"
+        android:layout_below="@+id/image"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
+
 
     <TextView
         android:id="@+id/description"
@@ -66,7 +71,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/imageButton_profile" />
+        android:layout_toStartOf="@+id/imageButton_profile"
+        />
 
     <ImageButton
         android:id="@+id/imageButton_profile"
@@ -79,6 +85,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/view"
         android:tag=""
-        android:onClick="openProfile"/>
+        android:onClick="openProfile"/> />
 
 </RelativeLayout>

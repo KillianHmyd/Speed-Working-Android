@@ -25,6 +25,13 @@
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
             />
+        <ImageView
+            android:layout_width="350dp"
+            android:layout_height="75dp"
+            android:src="@drawable/blaze"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:layout_marginTop="65dp"/>
 
     </RelativeLayout>
 

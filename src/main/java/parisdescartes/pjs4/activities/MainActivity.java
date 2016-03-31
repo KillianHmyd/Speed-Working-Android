@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -97,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Speed Working");
+        Drawable drawable = resize(getResources().getDrawable(R.drawable.blazewhite));
+        toolbar.setLogo(drawable);
+        toolbar.setTitle("");
+        //toolbar.setLogo(R.drawable.blazewhite);
         // Find our drawer view
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
@@ -119,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 //errorDialog("ici");
             }
         });
-        Picasso.with(this).load(profil.getPicture()).into(((ImageView) nvDrawer.getHeaderView(0).findViewById(R.id.imageFB)));
         makeNavHeaderBackground();
         setupDrawerContent(nvDrawer);
 
@@ -165,6 +169,11 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+    }
+    private Drawable resize(Drawable image) {
+        Bitmap b = ((BitmapDrawable)image).getBitmap();
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 250, 55, false);
+        return new BitmapDrawable(getResources(), bitmapResized);
     }
 
     private void makeNavHeaderBackground() {

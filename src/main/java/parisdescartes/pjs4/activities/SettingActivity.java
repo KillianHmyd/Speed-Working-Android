@@ -21,6 +21,7 @@ public class SettingActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
     }
 
@@ -38,7 +39,7 @@ public class SettingActivity extends PreferenceActivity {
                     ((Application) getApplication()).resetDb();
                     SharedPreferences sharedPreferencesUser = getSharedPreferences("USER", Context.MODE_PRIVATE);
                     sharedPreferencesUser.edit().clear().commit();
-                    startActivity(new Intent(getContext(), ConnectActivity.class));
+                    startActivity(new Intent(getActivity(), ConnectActivity.class));
                     return true;
                 }
             });
